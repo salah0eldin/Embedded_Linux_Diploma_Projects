@@ -27,33 +27,40 @@ set(APP_LIB_DIR ${APP_OUT_DIR}/libs)
 set(XOR_CIPHER_OBJ ${APP_OBJ_DIR}/xor_encrypt.o ${APP_OBJ_DIR}/xor_decrypt.o)
 
 # Modules Library files
-set(XOR_CIPHER_LIB ${APP_LIB_DIR}/xor_cipher.so)
+set(XOR_CIPHER_LIB ${APP_LIB_DIR}/libxor_cipher.so)
 
 # ==================================================================================================
 # Targets and Rules
 # ==================================================================================================
 
-# Build the xor_cipher shared library
-add_library(xor_cipher SHARED
-    ${XOR_CIPHER_SRC_DIR}/xor_encrypt.c
-    ${XOR_CIPHER_SRC_DIR}/xor_decrypt.c
+# Create object files in the specified directory (equivalent to gcc -c -fPIC)
+add_custom_command(
+    OUTPUT ${APP_OBJ_DIR}/xor_encrypt.o
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${APP_OBJ_DIR}
+    COMMAND gcc -c ${XOR_CIPHER_SRC_DIR}/xor_encrypt.c -I ${XOR_CIPHER_INC_DIR} -o ${APP_OBJ_DIR}/xor_encrypt.o -fPIC
+    DEPENDS ${XOR_CIPHER_SRC_DIR}/xor_encrypt.c
+    COMMENT "Building object file ${APP_OBJ_DIR}/xor_encrypt.o from ${XOR_CIPHER_SRC_DIR}/xor_encrypt.c..."
 )
 
-# Include directories for header files
-target_include_directories(xor_cipher PUBLIC
-    ${XOR_CIPHER_INC_DIR}
+add_custom_command(
+    OUTPUT ${APP_OBJ_DIR}/xor_decrypt.o
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${APP_OBJ_DIR}
+    COMMAND gcc -c ${XOR_CIPHER_SRC_DIR}/xor_decrypt.c -I ${XOR_CIPHER_INC_DIR} -o ${APP_OBJ_DIR}/xor_decrypt.o -fPIC
+    DEPENDS ${XOR_CIPHER_SRC_DIR}/xor_decrypt.c
+    COMMENT "Building object file ${APP_OBJ_DIR}/xor_decrypt.o from ${XOR_CIPHER_SRC_DIR}/xor_decrypt.c..."
 )
 
-# Set library output name and location
-set_target_properties(xor_cipher PROPERTIES
-    OUTPUT_NAME "xor_cipher"
-    LIBRARY_OUTPUT_DIRECTORY ${APP_LIB_DIR}
+# Build the xor_cipher shared library from the object files (equivalent to gcc -shared)
+add_custom_command(
+    OUTPUT ${XOR_CIPHER_LIB}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${APP_LIB_DIR}
+    COMMAND gcc -shared -o ${XOR_CIPHER_LIB} ${APP_OBJ_DIR}/xor_encrypt.o ${APP_OBJ_DIR}/xor_decrypt.o
+    DEPENDS ${APP_OBJ_DIR}/xor_encrypt.o ${APP_OBJ_DIR}/xor_decrypt.o
+    COMMENT "Building xor_cipher library..."
 )
 
-# Set position independent code for shared library (equivalent to -fPIC)
-set_target_properties(xor_cipher PROPERTIES
-    POSITION_INDEPENDENT_CODE ON
-)
+# Create a target that depends on the library
+add_custom_target(xor_cipher ALL DEPENDS ${XOR_CIPHER_LIB})
 
 # Create necessary directories
 add_custom_target(dirs_xor
@@ -61,8 +68,6 @@ add_custom_target(dirs_xor
     COMMAND ${CMAKE_COMMAND} -E make_directory ${APP_LIB_DIR}
     COMMENT "Creating necessary directories..."
 )
-
-add_dependencies(xor_cipher dirs_xor)
 
 # Custom target for help message
 add_custom_target(show_help_xor

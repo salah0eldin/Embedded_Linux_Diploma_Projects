@@ -59,25 +59,28 @@ add_subdirectory(${CAESAR_CIPHER_DIR} caesar_cipher_build)
 add_subdirectory(${XOR_CIPHER_DIR} xor_cipher_build)
 
 # Build the application binary and link with the libraries
-add_executable(output ${APP_SRC})
-
-# Include directories for header files
-target_include_directories(output PRIVATE
-    ${CAESAR_CIPHER_INC_DIR}
-    ${XOR_CIPHER_INC_DIR}
+# First create the application object file
+add_custom_command(
+    OUTPUT ${APP_OBJ_DIR}/app.o
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${APP_OBJ_DIR}
+    COMMAND gcc -c ${CMAKE_CURRENT_SOURCE_DIR}/${APP_SRC} -I ${CAESAR_CIPHER_INC_DIR} -I ${XOR_CIPHER_INC_DIR} -o ${APP_OBJ_DIR}/app.o
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${APP_SRC}
+    COMMENT "Building application object..."
 )
 
-# Link with the libraries
-target_link_libraries(output 
-    caesar_cipher
-    xor_cipher
+# Build the final executable from object file and libraries
+add_custom_command(
+    OUTPUT ${APP_BIN}
+    COMMAND gcc ${APP_OBJ_DIR}/app.o -L${APP_LIB_DIR} ${CAESAR_CIPHER_LIB} ${XOR_CIPHER_LIB} -o ${APP_BIN} -Wl,-rpath=${APP_LIB_DIR}
+    DEPENDS ${APP_OBJ_DIR}/app.o ${CAESAR_CIPHER_LIB} ${XOR_CIPHER_LIB}
+    COMMENT "Building output..."
 )
 
-# Set RPATH for shared libraries
-set_target_properties(output PROPERTIES
-    INSTALL_RPATH ${APP_LIB_DIR}
-    BUILD_WITH_INSTALL_RPATH TRUE
-)
+# Create a target that depends on the final executable
+add_custom_target(output ALL DEPENDS ${APP_BIN})
+
+# Make sure libraries are built before the executable
+add_dependencies(output caesar_cipher xor_cipher)
 
 # Custom target to create necessary directories
 add_custom_target(dirs

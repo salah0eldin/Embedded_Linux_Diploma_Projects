@@ -27,28 +27,40 @@ set(APP_LIB_DIR ${APP_OUT_DIR}/libs)
 set(CAESAR_CIPHER_OBJ ${APP_OBJ_DIR}/caesar_encrypt.o ${APP_OBJ_DIR}/caesar_decrypt.o)
 
 # Modules Library files
-set(CAESAR_CIPHER_LIB ${APP_LIB_DIR}/caesar_cipher.a)
+set(CAESAR_CIPHER_LIB ${APP_LIB_DIR}/libcaesar_cipher.a)
 
 # ==================================================================================================
 # Targets and Rules
 # ==================================================================================================
 
-# Build the caesar_cipher static library
-add_library(caesar_cipher STATIC
-    ${CAESAR_CIPHER_SRC_DIR}/caesar_encrypt.c
-    ${CAESAR_CIPHER_SRC_DIR}/caesar_decrypt.c
+# Create object files in the specified directory (equivalent to gcc -c)
+add_custom_command(
+    OUTPUT ${APP_OBJ_DIR}/caesar_encrypt.o
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${APP_OBJ_DIR}
+    COMMAND gcc -c ${CAESAR_CIPHER_SRC_DIR}/caesar_encrypt.c -I ${CAESAR_CIPHER_INC_DIR} -o ${APP_OBJ_DIR}/caesar_encrypt.o
+    DEPENDS ${CAESAR_CIPHER_SRC_DIR}/caesar_encrypt.c
+    COMMENT "Building object file ${APP_OBJ_DIR}/caesar_encrypt.o from ${CAESAR_CIPHER_SRC_DIR}/caesar_encrypt.c..."
 )
 
-# Include directories for header files
-target_include_directories(caesar_cipher PUBLIC
-    ${CAESAR_CIPHER_INC_DIR}
+add_custom_command(
+    OUTPUT ${APP_OBJ_DIR}/caesar_decrypt.o
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${APP_OBJ_DIR}
+    COMMAND gcc -c ${CAESAR_CIPHER_SRC_DIR}/caesar_decrypt.c -I ${CAESAR_CIPHER_INC_DIR} -o ${APP_OBJ_DIR}/caesar_decrypt.o
+    DEPENDS ${CAESAR_CIPHER_SRC_DIR}/caesar_decrypt.c
+    COMMENT "Building object file ${APP_OBJ_DIR}/caesar_decrypt.o from ${CAESAR_CIPHER_SRC_DIR}/caesar_decrypt.c..."
 )
 
-# Set library output name and location
-set_target_properties(caesar_cipher PROPERTIES
-    OUTPUT_NAME "caesar_cipher"
-    ARCHIVE_OUTPUT_DIRECTORY ${APP_LIB_DIR}
+# Build the caesar_cipher static library from the object files (equivalent to ar -cr)
+add_custom_command(
+    OUTPUT ${CAESAR_CIPHER_LIB}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${APP_LIB_DIR}
+    COMMAND ar -cr ${CAESAR_CIPHER_LIB} ${APP_OBJ_DIR}/caesar_encrypt.o ${APP_OBJ_DIR}/caesar_decrypt.o
+    DEPENDS ${APP_OBJ_DIR}/caesar_encrypt.o ${APP_OBJ_DIR}/caesar_decrypt.o
+    COMMENT "Building caesar_cipher library..."
 )
+
+# Create a target that depends on the library
+add_custom_target(caesar_cipher ALL DEPENDS ${CAESAR_CIPHER_LIB})
 
 # Create necessary directories
 add_custom_target(dirs_caesar
@@ -56,8 +68,6 @@ add_custom_target(dirs_caesar
     COMMAND ${CMAKE_COMMAND} -E make_directory ${APP_LIB_DIR}
     COMMENT "Creating necessary directories..."
 )
-
-add_dependencies(caesar_cipher dirs_caesar)
 
 # Custom target for help message
 add_custom_target(show_help_caesar
