@@ -1,0 +1,33 @@
+#!/bin/bash
+
+read -p "Enter the username: " user
+
+# Check if user exists
+if ! id "$user" &>/dev/null; then
+    echo "User '$user' does not exist."
+    echo "Usage: Please enter an existing username."
+    exit 1
+fi
+
+home_usr_dir="/home/$user"
+
+dir="usr_dir"
+
+# a) Check if the directory we want to create already exists, and if it does, remove it.
+[ -d "$dir" ] && rm -rf "$dir"
+
+# b) Create the directory & create 4 files in this directory (main.c, main.h, hello.c, hello.h)
+mkdir "$dir" && touch "$dir"/main.{c,h} "$dir"/hello.{c,h}
+
+# c) Loop on each of these files and write
+for file in $(ls "$dir"); do
+    echo "this file is named $file" > "$dir/$file";
+done
+
+# d) Compress this directory into a tar file
+tar -czf "${dir}.tar.gz" "$dir"
+
+# e) Copy the tar file to the user's home directory and extract it there
+sudo cp "${dir}.tar.gz" "$home_usr_dir" && sudo tar -xzf "${dir}.tar.gz" -C "$home_usr_dir"
+
+rm -rf "$dir" "${dir}.tar.gz"

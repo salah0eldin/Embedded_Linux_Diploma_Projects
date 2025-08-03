@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# c) Check that the script is run with “sudo” permission.
+if [ $USER != "root" ]; then
+    echo "This script must be run as root."
+    exit 1
+fi
+
+# b) Check that these arguments are really passed
+if [ $# -ne 3 ]; then
+    echo "Usage: $0 <username> <password> <groupname>"
+    exit 1
+fi
+
+# a) Take as arguments (username, userpass, groupname)
+username=$1
+userpass=$2
+groupname=$3
+
+# d) Print to the display the arguments entered.
+echo "Username: $username"
+echo "Password: $userpass"
+echo "Groupname: $groupname"
+
+
+# e) Create the new user with specified conditions
+useradd -m -s /bin/bash -N $username
+
+# f) Add the user password without prompting
+echo "$username:$userpass" | chpasswd
+
+# g) Display the user and group information about this user
+id $username
+
+# h) Create a new group with ID=200 and the name from the argument
+groupadd -g 200 $groupname
+
+# i) Add the new user to this new group
+usermod -aG $groupname $username
+
+# j) Display the user and group information about this user again
+id $username
+
+# k) Change the user ID to 1600 and the group ID to the group created in step h
+usermod -u 1600 -g $groupname $username
+
+# l) Display the user and group information about this user again
+id $username
+
+echo "done"
+

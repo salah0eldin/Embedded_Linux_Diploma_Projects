@@ -1,0 +1,14 @@
+m)
+    Method 1: Add Script Directory to $PATH
+        export PATH=$PATH:$(pwd)
+    Method 2: Move Script to a bin Directory
+        cp ./userdef $HOME/.local/bin/
+
+n)
+    Methods 2 makes it permannent 
+    for Method 1 add the line to .bashrc or .profile
+
+o)
+    if Method 2 source the script you 
+    added the line to, either .bashrc or .profile
+

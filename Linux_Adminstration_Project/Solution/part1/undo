@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sudo userdel edge1 -r;
+sudo groupdel groupedge;

@@ -1,0 +1,38 @@
+#!/bin/bash
+
+read -p "Enter username: " username
+
+# Check if user exists
+if ! id "$username" &>/dev/null; then
+    echo "User '$username' does not exist."
+    exit 1
+fi
+
+read -s -p "Enter $username password: " user_pass
+echo
+#g)
+su - $username <<EOF
+$user_pass
+
+#h)
+ls -r -l /home/$username/usr_dir
+
+if ! echo "$user_pass" | sudo -S -l -U "$username" 2>/dev/null | grep -q '(ALL)'; then
+    echo "user not in sudoers, lets work around"
+    cp -r /home/$username/usr_dir /home/$username/usr_dir_copy
+    rm -rf /home/$username/usr_dir
+    mv /home/$username/usr_dir_copy /home/$username/usr_dir
+else
+#i)
+    echo "$user_pass" | sudo -S chown "$username:$username" /home/$username/usr_dir
+fi
+
+#j)
+ls -r -l /home/$username/usr_dir
+
+#k)
+ls /home/$username/usr_dir | grep file
+
+#l)
+rm /home/$username/usr_dir/*.c
+EOF
