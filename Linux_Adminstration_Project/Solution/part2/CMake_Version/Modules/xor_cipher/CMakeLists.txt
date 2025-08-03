@@ -7,11 +7,6 @@
 # ==================================================================================================
 # Variables and Directories
 # ==================================================================================================
-# Variable to control verbosity of the output
-option(VERBOSE "Show verbose output" OFF)
-if(VERBOSE)
-    set(CMAKE_VERBOSE_MAKEFILE ON)
-endif()
 
 # Main Directories
 set(ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../..)
@@ -77,8 +72,5 @@ add_custom_target(show_help_xor
     COMMAND ${CMAKE_COMMAND} -E echo "  dirs      - Create necessary directories"
     COMMAND ${CMAKE_COMMAND} -E echo "  show_help - Display this help message"
     COMMAND ${CMAKE_COMMAND} -E echo ""
-    COMMAND ${CMAKE_COMMAND} -E echo "Variables:"
-    COMMAND ${CMAKE_COMMAND} -E echo "  -DVERBOSE=ON - Show all commands executed by make"
-    COMMAND ${CMAKE_COMMAND} -E echo "                 (default: VERBOSE=OFF, commands are hidden)"
-    COMMENT "Displaying help message for xor_cipher"
+   COMMENT "Displaying help message for xor_cipher"
 )

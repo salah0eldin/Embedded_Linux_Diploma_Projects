@@ -16,11 +16,6 @@ project(
 # ==================================================================================================
 # Variables and Directories
 # ==================================================================================================
-# Variable to control verbosity of the output
-option(VERBOSE "Show verbose output" OFF)
-if(VERBOSE)
-    set(CMAKE_VERBOSE_MAKEFILE ON)
-endif()
 
 # Main Directories
 set(ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
@@ -103,8 +98,11 @@ add_custom_target(show_help
     COMMAND ${CMAKE_COMMAND} -E echo "  clean     - Remove generated files"
     COMMAND ${CMAKE_COMMAND} -E echo "  show_help - Show this help message"
     COMMAND ${CMAKE_COMMAND} -E echo ""
-    COMMAND ${CMAKE_COMMAND} -E echo "Variables:"
-    COMMAND ${CMAKE_COMMAND} -E echo "  -DVERBOSE=ON - Show all commands executed by make"
-    COMMAND ${CMAKE_COMMAND} -E echo "                 (default: VERBOSE=OFF, commands are hidden)"
     COMMENT "Displaying help message"
+)
+
+# Override the default clean target to also remove the out directory
+set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
+    ${APP_OUT_DIR}
+    ${APP_BIN}
 )
