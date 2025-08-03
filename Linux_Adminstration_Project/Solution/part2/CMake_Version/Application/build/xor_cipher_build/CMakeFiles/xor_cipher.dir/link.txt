@@ -1,0 +1,1 @@
+/usr/bin/cc -fPIC -Wl,--dependency-file=CMakeFiles/xor_cipher.dir/link.d -shared -Wl,-soname,libxor_cipher.so -o /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Linux_Adminstration_Project/Solution/part2/CMake_Version/Application/out/libs/libxor_cipher.so CMakeFiles/xor_cipher.dir/src/xor_encrypt.o CMakeFiles/xor_cipher.dir/src/xor_decrypt.o
