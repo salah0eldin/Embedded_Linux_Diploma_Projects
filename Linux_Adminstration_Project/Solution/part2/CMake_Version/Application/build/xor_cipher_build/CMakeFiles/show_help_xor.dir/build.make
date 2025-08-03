@@ -74,9 +74,6 @@ xor_cipher_build/CMakeFiles/show_help_xor:
 	cd /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Linux_Adminstration_Project/Solution/part2/CMake_Version/Application/build/xor_cipher_build && /usr/bin/cmake -E echo \ \ dirs\ \ \ \ \ \ -\ Create\ necessary\ directories
 	cd /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Linux_Adminstration_Project/Solution/part2/CMake_Version/Application/build/xor_cipher_build && /usr/bin/cmake -E echo \ \ show_help\ -\ Display\ this\ help\ message
 	cd /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Linux_Adminstration_Project/Solution/part2/CMake_Version/Application/build/xor_cipher_build && /usr/bin/cmake -E echo 
-	cd /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Linux_Adminstration_Project/Solution/part2/CMake_Version/Application/build/xor_cipher_build && /usr/bin/cmake -E echo Variables:
-	cd /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Linux_Adminstration_Project/Solution/part2/CMake_Version/Application/build/xor_cipher_build && /usr/bin/cmake -E echo \ \ -DVERBOSE=ON\ -\ Show\ all\ commands\ executed\ by\ make
-	cd /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Linux_Adminstration_Project/Solution/part2/CMake_Version/Application/build/xor_cipher_build && /usr/bin/cmake -E echo \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (default:\ VERBOSE=OFF,\ commands\ are\ hidden)
 
 xor_cipher_build/CMakeFiles/show_help_xor.dir/codegen:
 .PHONY : xor_cipher_build/CMakeFiles/show_help_xor.dir/codegen

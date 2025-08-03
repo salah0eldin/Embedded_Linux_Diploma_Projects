@@ -73,9 +73,6 @@ CMakeFiles/show_help:
 	/usr/bin/cmake -E echo \ \ clean\ \ \ \ \ -\ Remove\ generated\ files
 	/usr/bin/cmake -E echo \ \ show_help\ -\ Show\ this\ help\ message
 	/usr/bin/cmake -E echo 
-	/usr/bin/cmake -E echo Variables:
-	/usr/bin/cmake -E echo \ \ -DVERBOSE=ON\ -\ Show\ all\ commands\ executed\ by\ make
-	/usr/bin/cmake -E echo \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (default:\ VERBOSE=OFF,\ commands\ are\ hidden)
 
 CMakeFiles/show_help.dir/codegen:
 .PHONY : CMakeFiles/show_help.dir/codegen

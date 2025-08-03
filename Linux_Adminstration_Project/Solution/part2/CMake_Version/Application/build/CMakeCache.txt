@@ -204,9 +204,6 @@ CMAKE_TAPI:FILEPATH=CMAKE_TAPI-NOTFOUND
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
-//Show verbose output
-VERBOSE:BOOL=OFF
-
 //Value Computed by CMake
 cipher_cmake_BINARY_DIR:STATIC=/home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Linux_Adminstration_Project/Solution/part2/CMake_Version/Application/build
 
