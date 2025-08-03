@@ -61,7 +61,6 @@ all: dirs $(APP_BIN)
 $(APP_BIN): $(APP_OBJ) $(CAESAR_CIPHER_LIB) $(XOR_CIPHER_LIB)
 	$(call echo_colored, "Building output...")
 	$(V)gcc $(APP_OBJ) -L$(APP_LIB_DIR) $(CAESAR_CIPHER_LIB) $(XOR_CIPHER_LIB) -o $(APP_BIN) -Wl,-rpath=$(APP_LIB_DIR)
-	@echo
 
 
 # Build application object file
