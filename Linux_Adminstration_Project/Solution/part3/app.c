@@ -7,7 +7,7 @@
 
 int pipefd1[2], pipefd2[2];
 char buffer[1024];
-int pid;
+int pid1, pid2;
 
 void worker1(void);
 void worker2(void);
@@ -23,31 +23,30 @@ int main()
         return 1;
     }
 
-    pid = fork();
-    if (pid < 0)
+    pid1 = fork();
+    if (pid1 < 0)
     {
         perror("Fork failed");
         return 1;
     }
 
-    if (pid == 0)
+    if (pid1 == 0)
     {
         worker1();
     }
     else
     {
         // Parent process
-        printf("Parent process PID: %d\n", getpid());
         close(pipefd1[1]); // Close write end of first pipe
-
-        pid = fork();
-        if (pid < 0)
+        
+        pid2 = fork();
+        if (pid2 < 0)
         {
             perror("Fork failed");
             return 1;
         }
 
-        if (pid == 0)
+        if (pid2 == 0)
         {
             worker2();
         }
@@ -63,11 +62,10 @@ int main()
 void worker1(void)
 {
     // Worker1 process
-    printf("        Worker1 process started with PID: %d\n", getpid());
     close(pipefd1[0]);               // Close read end
     dup2(pipefd1[1], STDOUT_FILENO); // Redirect stdout to pipe
     close(pipefd1[1]);               // Close write end after duplicating
-
+    
     char *args[] = {"mpstat", NULL};
     execv("/usr/bin/mpstat", args);
     perror("execv failed for mpstat");
@@ -77,11 +75,10 @@ void worker1(void)
 void worker2(void)
 {
     // Worker2 process of the parent
-    printf("        Worker2 process started with PID: %d\n", getpid());
     close(pipefd2[0]);               // Close read end
     dup2(pipefd2[1], STDOUT_FILENO); // Redirect stdout to pipe
     close(pipefd2[1]);
-
+    
     char *args[] = {"ps", NULL};
     execv("/usr/bin/ps", args);
     perror("execv failed for ps");
@@ -90,9 +87,12 @@ void worker2(void)
 
 void parent(void)
 {
-
+    printf("Parent process PID: %d\n", getpid());
+    printf("        Worker1 process started with PID: %d\n", pid1);
+    printf("        Worker2 process started with PID: %d\n", pid2);
+    
     signal(SIGINT, int_handle); // Ignore SIGINT in parent
-
+    
     // Parent process
     close(pipefd2[1]); // Close write end of second pipe
 
@@ -104,7 +104,7 @@ void parent(void)
         printf("%s", buffer);
     }
     close(pipefd1[0]);
-
+    
     printf("\n=== OUTPUT FROM WORKER2 (ps) ===\n");
     while (read(pipefd2[0], buffer, sizeof(buffer) - 1) > 0)
     {
