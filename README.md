@@ -89,15 +89,6 @@ Each project and part contains detailed documentation in its respective director
 3. **Choose a part**: Navigate to part1/, part2/, or part3/
 4. **Follow detailed instructions**: Each part has comprehensive documentation
 
-## Future Projects
-
-This repository is designed to accommodate additional projects as the diploma program continues:
-
-- **Project 2**: Device Driver Development *(Coming Soon)*
-- **Project 3**: Real-time Systems Programming *(Planned)*
-- **Project 4**: Network Programming *(Planned)*
-- **Project 5**: Embedded System Optimization *(Planned)*
-
 ---
 
 **Author:** Salah Eldin  
