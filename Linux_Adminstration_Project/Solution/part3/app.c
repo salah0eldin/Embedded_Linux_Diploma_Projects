@@ -96,10 +96,6 @@ void parent(void)
     // Parent process
     close(pipefd2[1]); // Close write end of second pipe
 
-    // Wait for children and read their output
-    // wait(NULL); // Wait for first child
-    // wait(NULL); // Wait for second child
-
     // Read and format output from Worker1
     printf("\n=== OUTPUT FROM WORKER1 (mpstat) ===\n");
     while (read(pipefd1[0], buffer, sizeof(buffer) - 1) > 0)
