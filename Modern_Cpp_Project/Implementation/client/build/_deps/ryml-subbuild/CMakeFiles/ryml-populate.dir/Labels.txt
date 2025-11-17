@@ -1,0 +1,14 @@
+# Target labels
+ ryml-populate
+# Source files and their labels
+/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/ryml-subbuild/CMakeFiles/ryml-populate
+/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/ryml-subbuild/CMakeFiles/ryml-populate.rule
+/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/ryml-subbuild/CMakeFiles/ryml-populate-complete.rule
+/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/ryml-subbuild/ryml-populate-prefix/src/ryml-populate-stamp/ryml-populate-build.rule
+/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/ryml-subbuild/ryml-populate-prefix/src/ryml-populate-stamp/ryml-populate-configure.rule
+/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/ryml-subbuild/ryml-populate-prefix/src/ryml-populate-stamp/ryml-populate-download.rule
+/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/ryml-subbuild/ryml-populate-prefix/src/ryml-populate-stamp/ryml-populate-install.rule
+/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/ryml-subbuild/ryml-populate-prefix/src/ryml-populate-stamp/ryml-populate-mkdir.rule
+/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/ryml-subbuild/ryml-populate-prefix/src/ryml-populate-stamp/ryml-populate-patch.rule
+/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/ryml-subbuild/ryml-populate-prefix/src/ryml-populate-stamp/ryml-populate-test.rule
+/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/ryml-subbuild/ryml-populate-prefix/src/ryml-populate-stamp/ryml-populate-update.rule

@@ -1,1 +1,1 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/client.dir/link.d CMakeFiles/client.dir/client.cpp.o -o client
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/client.dir/link.d CMakeFiles/client.dir/Client.cpp.o -o client  _deps/ryml-build/libryml.a -lpthread

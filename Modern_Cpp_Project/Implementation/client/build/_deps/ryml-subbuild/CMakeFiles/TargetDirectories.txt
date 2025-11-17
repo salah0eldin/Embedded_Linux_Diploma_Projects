@@ -1,0 +1,3 @@
+/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/ryml-subbuild/CMakeFiles/ryml-populate.dir
+/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/ryml-subbuild/CMakeFiles/edit_cache.dir
+/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/ryml-subbuild/CMakeFiles/rebuild_cache.dir

@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client
+CMAKE_SOURCE_DIR = /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build
+CMAKE_BINARY_DIR = /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/client.dir/depend.make
@@ -72,32 +72,33 @@ include CMakeFiles/client.dir/flags.make
 CMakeFiles/client.dir/codegen:
 .PHONY : CMakeFiles/client.dir/codegen
 
-CMakeFiles/client.dir/client.cpp.o: CMakeFiles/client.dir/flags.make
-CMakeFiles/client.dir/client.cpp.o: /mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/client.cpp
-CMakeFiles/client.dir/client.cpp.o: CMakeFiles/client.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/client.dir/client.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/client.dir/client.cpp.o -MF CMakeFiles/client.dir/client.cpp.o.d -o CMakeFiles/client.dir/client.cpp.o -c /mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/client.cpp
+CMakeFiles/client.dir/Client.cpp.o: CMakeFiles/client.dir/flags.make
+CMakeFiles/client.dir/Client.cpp.o: /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/Client.cpp
+CMakeFiles/client.dir/Client.cpp.o: CMakeFiles/client.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/client.dir/Client.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/client.dir/Client.cpp.o -MF CMakeFiles/client.dir/Client.cpp.o.d -o CMakeFiles/client.dir/Client.cpp.o -c /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/Client.cpp
 
-CMakeFiles/client.dir/client.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/client.dir/client.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/client.cpp > CMakeFiles/client.dir/client.cpp.i
+CMakeFiles/client.dir/Client.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/client.dir/Client.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/Client.cpp > CMakeFiles/client.dir/Client.cpp.i
 
-CMakeFiles/client.dir/client.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/client.dir/client.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/client.cpp -o CMakeFiles/client.dir/client.cpp.s
+CMakeFiles/client.dir/Client.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/client.dir/Client.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/Client.cpp -o CMakeFiles/client.dir/Client.cpp.s
 
 # Object files for target client
 client_OBJECTS = \
-"CMakeFiles/client.dir/client.cpp.o"
+"CMakeFiles/client.dir/Client.cpp.o"
 
 # External object files for target client
 client_EXTERNAL_OBJECTS =
 
-client: CMakeFiles/client.dir/client.cpp.o
+client: CMakeFiles/client.dir/Client.cpp.o
 client: CMakeFiles/client.dir/build.make
 client: CMakeFiles/client.dir/compiler_depend.ts
+client: _deps/ryml-build/libryml.a
 client: CMakeFiles/client.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable client"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable client"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/client.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -109,6 +110,6 @@ CMakeFiles/client.dir/clean:
 .PHONY : CMakeFiles/client.dir/clean
 
 CMakeFiles/client.dir/depend:
-	cd /mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client /mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client /mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build /mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build /mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/CMakeFiles/client.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/CMakeFiles/client.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/client.dir/depend
 

@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client
+CMAKE_SOURCE_DIR = /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build
+CMAKE_BINARY_DIR = /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -85,11 +85,56 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/CMakeFiles /mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/CMakeFiles /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -129,29 +174,81 @@ client/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/build
 .PHONY : client/fast
 
-client.o: client.cpp.o
-.PHONY : client.o
+#=============================================================================
+# Target rules for targets named ryml
+
+# Build rule for target.
+ryml: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ryml
+.PHONY : ryml
+
+# fast build rule for target.
+ryml/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/ryml-build/CMakeFiles/ryml.dir/build.make _deps/ryml-build/CMakeFiles/ryml.dir/build
+.PHONY : ryml/fast
+
+#=============================================================================
+# Target rules for targets named ryml-uninstall
+
+# Build rule for target.
+ryml-uninstall: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ryml-uninstall
+.PHONY : ryml-uninstall
+
+# fast build rule for target.
+ryml-uninstall/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/ryml-build/CMakeFiles/ryml-uninstall.dir/build.make _deps/ryml-build/CMakeFiles/ryml-uninstall.dir/build
+.PHONY : ryml-uninstall/fast
+
+#=============================================================================
+# Target rules for targets named c4core-amalgamate
+
+# Build rule for target.
+c4core-amalgamate: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 c4core-amalgamate
+.PHONY : c4core-amalgamate
+
+# fast build rule for target.
+c4core-amalgamate/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/ryml-build/subprojects/c4core/build/CMakeFiles/c4core-amalgamate.dir/build.make _deps/ryml-build/subprojects/c4core/build/CMakeFiles/c4core-amalgamate.dir/build
+.PHONY : c4core-amalgamate/fast
+
+#=============================================================================
+# Target rules for targets named c4core
+
+# Build rule for target.
+c4core: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 c4core
+.PHONY : c4core
+
+# fast build rule for target.
+c4core/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/ryml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/build.make _deps/ryml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/build
+.PHONY : c4core/fast
+
+Client.o: Client.cpp.o
+.PHONY : Client.o
 
 # target to build an object file
-client.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/client.cpp.o
-.PHONY : client.cpp.o
+Client.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/Client.cpp.o
+.PHONY : Client.cpp.o
 
-client.i: client.cpp.i
-.PHONY : client.i
+Client.i: Client.cpp.i
+.PHONY : Client.i
 
 # target to preprocess a source file
-client.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/client.cpp.i
-.PHONY : client.cpp.i
+Client.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/Client.cpp.i
+.PHONY : Client.cpp.i
 
-client.s: client.cpp.s
-.PHONY : client.s
+Client.s: Client.cpp.s
+.PHONY : Client.s
 
 # target to generate assembly for a file
-client.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/client.cpp.s
-.PHONY : client.cpp.s
+Client.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/Client.cpp.s
+.PHONY : Client.cpp.s
 
 # Help Target
 help:
@@ -160,11 +257,19 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... c4core-amalgamate"
+	@echo "... ryml-uninstall"
+	@echo "... c4core"
 	@echo "... client"
-	@echo "... client.o"
-	@echo "... client.i"
-	@echo "... client.s"
+	@echo "... ryml"
+	@echo "... Client.o"
+	@echo "... Client.i"
+	@echo "... Client.s"
 .PHONY : help
 
 

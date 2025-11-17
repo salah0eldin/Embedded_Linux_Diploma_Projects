@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/client.cpp" "CMakeFiles/client.dir/client.cpp.o" "gcc" "CMakeFiles/client.dir/client.cpp.o.d"
+  "/home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/Client.cpp" "CMakeFiles/client.dir/Client.cpp.o" "gcc" "CMakeFiles/client.dir/Client.cpp.o.d"
   "" "client" "gcc" "CMakeFiles/client.dir/link.d"
   )
 
