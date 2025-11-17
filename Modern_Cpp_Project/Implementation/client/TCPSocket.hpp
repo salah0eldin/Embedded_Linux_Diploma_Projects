@@ -83,11 +83,12 @@ public:
     
     /**
      * @brief Wait for incoming connection (server-side)
+     * @return true if successful, false otherwise
      */
-    void waitForConnect() override {
+    bool waitForConnect() override {
         if (!is_server) {
             PRINT_ERROR("waitForConnect called on client socket");
-            return;
+            return false;
         }
         
         PRINT_DEBUG("Waiting for client connection...");
@@ -95,46 +96,52 @@ public:
         try {
             acceptor_->accept(socket_);
             PRINT_DEBUG("Client connected");
+            return true;
         } catch (const std::exception& e) {
             PRINT_ERROR("Failed to accept connection: " << e.what());
-            throw;
+            return false;
         }
     }
     
     /**
      * @brief Connect to server (client-side)
+     * @param ip Server IP address
+     * @param port Server port number
+     * @return true if successful, false otherwise
      */
-    void connect() override {
+    bool connect(const std::string& ip, int port) override {
         if (is_server) {
             PRINT_ERROR("connect called on server socket");
-            return;
+            return false;
         }
         
-        PRINT_DEBUG("Attempting to connect to " << ip_address << ":" << port);
+        PRINT_DEBUG("Attempting to connect to " << ip << ":" << port);
         
         try {
             asio::ip::tcp::resolver resolver(io_context_);
-            auto endpoints = resolver.resolve(ip_address, std::to_string(port));
+            auto endpoints = resolver.resolve(ip, std::to_string(port));
             
             asio::error_code ec;
             asio::connect(socket_, endpoints, ec);
             
             if (ec) {
                 PRINT_ERROR("Connection failed: " << ec.message());
-                throw std::runtime_error("Connection failed: " + ec.message());
+                return false;
             }
             
             PRINT_DEBUG("Connected to server successfully");
+            return true;
         } catch (const std::exception& e) {
             PRINT_ERROR("Exception during connect: " << e.what());
-            throw;
+            return false;
         }
     }
     
     /**
      * @brief Send data through the socket
+     * @return Number of bytes sent, or -1 on error
      */
-    void send(const std::string& message) override {
+    int send(const std::string& message) override {
         PRINT_DEBUG("Sending message: " << message);
         
         try {
@@ -143,36 +150,45 @@ public:
             
             if (ec) {
                 PRINT_ERROR("Failed to send message: " << ec.message());
+                return -1;
             } else {
                 PRINT_DEBUG("Sent " << sent << " bytes");
+                return static_cast<int>(sent);
             }
         } catch (const std::exception& e) {
             PRINT_ERROR("Exception during send: " << e.what());
+            return -1;
         }
     }
     
     /**
      * @brief Receive data from the socket
+     * @param buffer Buffer to store received data
+     * @param buffer_size Size of buffer
+     * @return Number of bytes received, or -1 on error
      */
-    void receive() override {
+    int receive(char* buffer, int buffer_size) override {
         PRINT_DEBUG("Waiting to receive data...");
         
         try {
-            std::vector<char> buffer(1024);
             asio::error_code ec;
             
-            size_t received = socket_.read_some(asio::buffer(buffer), ec);
+            size_t received = socket_.read_some(asio::buffer(buffer, buffer_size), ec);
             
             if (ec == asio::error::eof) {
                 PRINT_DEBUG("Connection closed by peer");
+                return 0;
             } else if (ec) {
                 PRINT_ERROR("Failed to receive data: " << ec.message());
+                return -1;
             } else if (received > 0) {
-                std::string data(buffer.data(), received);
-                PRINT_DEBUG("Received " << received << " bytes: " << data);
+                PRINT_DEBUG("Received " << received << " bytes");
+                return static_cast<int>(received);
             }
+            return 0;
         } catch (const std::exception& e) {
             PRINT_ERROR("Exception during receive: " << e.what());
+            return -1;
         }
     }
     

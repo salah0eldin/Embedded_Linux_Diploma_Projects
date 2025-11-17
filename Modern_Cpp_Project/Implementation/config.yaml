@@ -2,16 +2,29 @@
 # Client Configuration File
 # ===================================================================
 
-# Server connection settings
-server:
-  ip: "192.168.1.18"  # Server IP address
-  port: 8080          # Server port number
+# Host server connection settings (receives threshold, sends LED state and temp)
+host_server:
+  tcp:
+    ip: "192.168.1.18"   # Host server IP for TCP
+    port: 8080           # Host server TCP port
+  udp:
+    ip: "192.168.1.18"   # Host server IP for UDP
+    port: 8081           # Host server UDP port
+
+# Sensor/Actuator server connection settings
+sensor_actuator_server:
+  tcp:
+    ip: "192.168.1.18"   # Sensor/Actuator server IP for TCP (send LED state)
+    port: 9080           # Sensor/Actuator server TCP port
+  udp:
+    ip: "192.168.1.18"   # Sensor/Actuator server IP for UDP (receive temp)
+    port: 9081           # Sensor/Actuator server UDP port
 
 # Logging configuration
 logging:
   level: "info"  # Options: none, error, info, debug, trace
 
-# Connection settings
-connection:
-  timeout: 5         # Connection timeout in seconds
-  retry_attempts: 3  # Number of retry attempts
+# Application settings
+application:
+  initial_threshold: 25.0  # Initial temperature threshold in Celsius
+  check_interval: 100      # Milliseconds between checks

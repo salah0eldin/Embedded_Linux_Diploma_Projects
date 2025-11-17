@@ -26,24 +26,32 @@ public:
     
     /**
      * @brief Wait for incoming connection (server-side)
+     * @return true if successful, false otherwise
      */
-    virtual void waitForConnect() = 0;
+    virtual bool waitForConnect() = 0;
     
     /**
      * @brief Connect to a server (client-side)
+     * @param ip Server IP address
+     * @param port Server port number
+     * @return true if successful, false otherwise
      */
-    virtual void connect() = 0;
+    virtual bool connect(const std::string& ip, int port) = 0;
     
     /**
      * @brief Send data through the socket
      * @param message The message to send
+     * @return Number of bytes sent, or -1 on error
      */
-    virtual void send(const std::string& message) = 0;
+    virtual int send(const std::string& message) = 0;
     
     /**
      * @brief Receive data from the socket
+     * @param buffer Buffer to store received data
+     * @param buffer_size Size of buffer
+     * @return Number of bytes received, or -1 on error
      */
-    virtual void receive() = 0;
+    virtual int receive(char* buffer, int buffer_size) = 0;
     
     /**
      * @brief Shutdown the socket connection

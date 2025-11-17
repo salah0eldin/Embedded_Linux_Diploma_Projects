@@ -336,6 +336,9 @@ FETCHCONTENT_UPDATES_DISCONNECTED_RYML:BOOL=OFF
 //Git command line client
 GIT_EXECUTABLE:FILEPATH=/usr/bin/git
 
+//Enable API generation (python, etc)
+RYML_BUILD_API:BOOL=OFF
+
 //build tools
 RYML_BUILD_TOOLS:BOOL=OFF
 
@@ -370,15 +373,6 @@ RYML_VALGRIND_OPTIONS:STRING=--gen-suppressions=all --error-exitcode=10101
 //Enable parsing of tabs after ':' and '-'. This is costly and
 // disabled by default.
 RYML_WITH_TAB_TOKENS:BOOL=OFF
-
-//Value Computed by CMake
-TCP_Client_BINARY_DIR:STATIC=/home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build
-
-//Value Computed by CMake
-TCP_Client_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-TCP_Client_SOURCE_DIR:STATIC=/home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client
 
 //Value Computed by CMake
 c4core_BINARY_DIR:STATIC=/home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/ryml-build/subprojects/c4core/build
@@ -556,8 +550,6 @@ CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
 //ADVANCED property for variable: GIT_EXECUTABLE
 GIT_EXECUTABLE-ADVANCED:INTERNAL=1
-//Enable API generation (python, etc)
-RYML_BUILD_API:INTERNAL=OFF
 //linker supports push/pop state
 _CMAKE_CXX_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
 //linker supports push/pop state

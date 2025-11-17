@@ -8,12 +8,13 @@
 // ===================================================================
 // INCLUDES
 // ===================================================================
-#include "TCPSocket.hpp"
-#include "ClientChannel.hpp"
+#include "ClientApp.hpp"
 #include "ConfigParser.hpp"
 #include "config.h"
-#include <unistd.h>
+#include <csignal>
 #include <cstring>
+#include <iostream>
+#include <memory>
 
 // ===================================================================
 // GLOBAL VARIABLES
@@ -21,9 +22,24 @@
 // Define the global log level variable
 int g_current_log_level = LOG_LEVEL_INFO; // Default to INFO level
 
+// Global pointer to ClientApp for signal handling
+std::unique_ptr<ClientApp> g_app = nullptr;
+
 // ===================================================================
 // HELPER FUNCTIONS
 // ===================================================================
+
+/**
+ * @brief Signal handler for graceful shutdown
+ * @param signum Signal number
+ */
+void signalHandler(int signum) {
+    PRINT_INFO("Interrupt signal (" << signum << ") received");
+    if (g_app) {
+        g_app->stop();
+    }
+}
+
 void printUsage(const char* programName) {
     std::cout << "Usage: " << programName << " [OPTIONS]" << std::endl;
     std::cout << "Options:" << std::endl;
@@ -86,7 +102,7 @@ int main(int argc, char* argv[]) {
     // ---------------------------------------------------------------
     // Parse command-line arguments
     // ---------------------------------------------------------------
-    std::string configFile = "client_config.yaml";
+    std::string configFile = "../config.yaml";
     std::string logLevelOverride = "";
     
     if (parseCommandLineArgs(argc, argv, configFile, logLevelOverride) != 0) {
@@ -108,45 +124,57 @@ int main(int argc, char* argv[]) {
         PRINT_DEBUG("Log level overridden by command line: " << logLevelOverride);
     }
     
-    PRINT_INFO("Starting TCP Client Application...");
-    PRINT_DEBUG("Server IP: " << config.server_ip);
-    PRINT_DEBUG("Server Port: " << config.server_port);
-    PRINT_DEBUG("Connection timeout: " << config.connection_timeout << " seconds");
-    PRINT_DEBUG("Retry attempts: " << config.retry_attempts);
+    PRINT_INFO("=======================================================");
+    PRINT_INFO("       Multi-Server Client Application");
+    PRINT_INFO("=======================================================");
+    PRINT_DEBUG("Host Server TCP: " << config.host_server.tcp_ip << ":" << config.host_server.tcp_port);
+    PRINT_DEBUG("Host Server UDP: " << config.host_server.udp_ip << ":" << config.host_server.udp_port);
+    PRINT_DEBUG("Sensor Server TCP: " << config.sensor_actuator_server.tcp_ip << ":" << config.sensor_actuator_server.tcp_port);
+    PRINT_DEBUG("Sensor Server UDP: " << config.sensor_actuator_server.udp_ip << ":" << config.sensor_actuator_server.udp_port);
+    PRINT_DEBUG("Initial Threshold: " << config.initial_threshold << "°C");
+    PRINT_DEBUG("Check Interval: " << config.check_interval << "ms");
+    
+    // ---------------------------------------------------------------
+    // Setup signal handlers for graceful shutdown
+    // ---------------------------------------------------------------
+    signal(SIGINT, signalHandler);
+    signal(SIGTERM, signalHandler);
     
     // ---------------------------------------------------------------
     // Main application logic
     // ---------------------------------------------------------------
     try {
-        // Create TCP Socket (client mode) using config values
-        TCPSocket* tcpSocket = new TCPSocket(config.server_port, config.server_ip, false);
+        // Create and start the client application
+        g_app = std::make_unique<ClientApp>(config);
         
-        // Create Client Channel with the socket
-        ClientChannel clientChannel(tcpSocket);
+        if (!g_app->start()) {
+            PRINT_ERROR("Failed to start client application");
+            return 1;
+        }
         
-        // Start the client channel (connect to server)
-        clientChannel.start();
+        PRINT_INFO("Application running. Press Ctrl+C to stop.");
+        PRINT_INFO("=======================================================");
         
-        // Receive message from server
-        clientChannel.receive();
-        
-        // Send a message to server
-        clientChannel.send("Hello from Client!");
-        
-        // Keep connection alive for a moment
-        PRINT_DEBUG("Keeping connection open for " << config.connection_timeout << " seconds...");
-        sleep(config.connection_timeout);
-        
-        // Stop the client channel
-        clientChannel.stop();
-        
-        // Cleanup
-        delete tcpSocket;
+        // Keep running until stopped by signal
+        while (g_app->isRunning()) {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            
+            // Optionally print status every few seconds
+            static int counter = 0;
+            if (++counter % 10 == 0) {
+                PRINT_DEBUG("Status - Temp: " << g_app->getCurrentTemperature() << 
+                           "°C, Threshold: " << g_app->getThreshold() << 
+                           "°C, LED: " << (g_app->getLedState() ? "ON" : "OFF"));
+            }
+        }
         
         PRINT_INFO("Client application shutdown complete");
         
     } catch (const std::exception& e) {
         PRINT_ERROR("Exception: " << e.what());
+        if (g_app) {
+            g_app->stop();
+        }
         return 1;
     }
     

@@ -1,6 +1,7 @@
 CMakeFiles/client.dir/Client.cpp.o: \
  /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/Client.cpp \
  /usr/include/stdc-predef.h \
+ /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/ClientApp.hpp \
  /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/TCPSocket.hpp \
  /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/Socket.hpp \
  /usr/include/c++/15/string /usr/include/c++/15/bits/requires_hosted.h \
@@ -825,8 +826,7 @@ CMakeFiles/client.dir/Client.cpp.o: \
  /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/asio-src/asio/include/asio/write.hpp \
  /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/asio-src/asio/include/asio/write_at.hpp \
  /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/asio-src/asio/include/asio/impl/write_at.hpp \
- /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/ClientChannel.hpp \
- /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/Channel.hpp \
+ /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/UDPSocket.hpp \
  /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/ConfigParser.hpp \
  /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/ryml-src/src/ryml.hpp \
  /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/_deps/ryml-src/src/c4/yml/yml.hpp \
@@ -899,4 +899,12 @@ CMakeFiles/client.dir/Client.cpp.o: \
  /usr/include/c++/15/bits/codecvt.h \
  /usr/include/c++/15/x86_64-redhat-linux/bits/basic_file.h \
  /usr/include/c++/15/x86_64-redhat-linux/bits/c++io.h \
- /usr/include/c++/15/bits/fstream.tcc
+ /usr/include/c++/15/bits/fstream.tcc /usr/include/c++/15/thread \
+ /usr/include/c++/15/bits/this_thread_sleep.h /usr/include/c++/15/iomanip \
+ /usr/include/c++/15/locale \
+ /usr/include/c++/15/bits/locale_facets_nonio.h \
+ /usr/include/c++/15/x86_64-redhat-linux/bits/time_members.h \
+ /usr/include/c++/15/x86_64-redhat-linux/bits/messages_members.h \
+ /usr/include/libintl.h /usr/include/c++/15/bits/locale_facets_nonio.tcc \
+ /usr/include/c++/15/bits/locale_conv.h \
+ /usr/include/c++/15/bits/quoted_string.h
