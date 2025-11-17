@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(TCP_Client)
+project(Client)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -35,4 +35,22 @@ target_include_directories(client PRIVATE ${asio_SOURCE_DIR}/asio/include)
 target_compile_definitions(client PRIVATE ASIO_STANDALONE)
 
 # Link libraries
-target_link_libraries(client PRIVATE ryml::ryml pthread)
+target_link_libraries(client PRIVATE ryml::ryml)
+
+# Link threading library (pthread on Linux/Unix, native on Windows)
+find_package(Threads REQUIRED)
+target_link_libraries(client PRIVATE Threads::Threads)
+
+# Windows-specific: Link ws2_32 and mswsock for Asio sockets
+if(WIN32)
+    target_link_libraries(client PRIVATE ws2_32 mswsock)
+endif()
+
+# Custom target to run the client with config file
+add_custom_target(run
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/client -c ${CMAKE_CURRENT_SOURCE_DIR}/../config.yaml
+    DEPENDS client
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Running client with config file..."
+    USES_TERMINAL
+)

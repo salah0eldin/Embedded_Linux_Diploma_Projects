@@ -175,6 +175,19 @@ client/fast:
 .PHONY : client/fast
 
 #=============================================================================
+# Target rules for targets named run
+
+# Build rule for target.
+run: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 run
+.PHONY : run
+
+# fast build rule for target.
+run/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/build
+.PHONY : run/fast
+
+#=============================================================================
 # Target rules for targets named ryml
 
 # Build rule for target.
@@ -263,6 +276,7 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... c4core-amalgamate"
+	@echo "... run"
 	@echo "... ryml-uninstall"
 	@echo "... c4core"
 	@echo "... client"

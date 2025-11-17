@@ -4,7 +4,6 @@ client: \
   /usr/lib/gcc/x86_64-redhat-linux/15/crtbegin.o \
   CMakeFiles/client.dir/Client.cpp.o \
   _deps/ryml-build/libryml.a \
-  /usr/lib/gcc/x86_64-redhat-linux/15/../../../../lib64/libpthread.a \
   /usr/lib/gcc/x86_64-redhat-linux/15/libstdc++.so \
   /usr/lib/gcc/x86_64-redhat-linux/15/../../../../lib64/libm.so \
   /usr/lib/gcc/x86_64-redhat-linux/15/../../../../lib64/libm.so \
@@ -42,8 +41,6 @@ client: \
 CMakeFiles/client.dir/Client.cpp.o:
 
 _deps/ryml-build/libryml.a:
-
-/usr/lib/gcc/x86_64-redhat-linux/15/../../../../lib64/libpthread.a:
 
 /usr/lib/gcc/x86_64-redhat-linux/15/libstdc++.so:
 

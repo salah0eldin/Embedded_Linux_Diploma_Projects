@@ -1,4 +1,5 @@
 /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/CMakeFiles/client.dir
+/home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/CMakeFiles/run.dir
 /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/CMakeFiles/edit_cache.dir
 /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/CMakeFiles/rebuild_cache.dir
 /home/salah0eldin/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client/build/CMakeFiles/list_install_components.dir
