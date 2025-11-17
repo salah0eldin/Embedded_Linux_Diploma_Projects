@@ -1,3 +1,0 @@
-/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/server/build/CMakeFiles/server.dir
-/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/server/build/CMakeFiles/edit_cache.dir
-/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/server/build/CMakeFiles/rebuild_cache.dir

@@ -50,7 +50,7 @@ private:
     std::unique_ptr<UDPSocket> sensor_udp_socket_;         // Receive temp from sensor
     
     // Threading
-    std::thread threshold_monitor_thread_;
+    std::thread  threshold_monitor_thread_;
     std::thread temperature_monitor_thread_;
     std::atomic<bool> running_;
     
