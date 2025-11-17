@@ -22,12 +22,18 @@
 #include <memory>
 #include <sstream>
 #include <iomanip>
+#include <functional>
 
 // ===================================================================
 // CLIENT APPLICATION CLASS
 // ===================================================================
 class ClientApp {
 private:
+    // ===================================================================
+    // TYPE DEFINITIONS
+    // ===================================================================
+    using MessageCallback = std::function<void(const std::string&)>;
+    
     // ===================================================================
     // MEMBER VARIABLES
     // ===================================================================
@@ -44,8 +50,8 @@ private:
     std::unique_ptr<UDPSocket> sensor_udp_socket_;         // Receive temp from sensor
     
     // Threading
-    std::thread tcp_thread_;
-    std::thread udp_thread_;
+    std::thread threshold_monitor_thread_;
+    std::thread temperature_monitor_thread_;
     std::atomic<bool> running_;
     
     // Shared State (protected by mutex)
@@ -105,8 +111,8 @@ public:
         
         // Start threads
         running_ = true;
-        tcp_thread_ = std::thread(&ClientApp::tcpThreadFunc, this);
-        udp_thread_ = std::thread(&ClientApp::udpThreadFunc, this);
+        threshold_monitor_thread_ = std::thread(&ClientApp::thresholdMonitorThreadFunc, this);
+        temperature_monitor_thread_ = std::thread(&ClientApp::temperatureMonitorThreadFunc, this);
         
         PRINT_INFO("[ClientApp] Application started successfully");
         return true;
@@ -124,11 +130,11 @@ public:
         running_ = false;
         
         // Wait for threads to finish
-        if (tcp_thread_.joinable()) {
-            tcp_thread_.join();
+        if (threshold_monitor_thread_.joinable()) {
+            threshold_monitor_thread_.join();
         }
-        if (udp_thread_.joinable()) {
-            udp_thread_.join();
+        if (temperature_monitor_thread_.joinable()) {
+            temperature_monitor_thread_.join();
         }
         
         // Close sockets
@@ -196,9 +202,8 @@ private:
             
             // For receiving from sensor (bind immediately)
             sensor_udp_socket_ = std::make_unique<UDPSocket>(
-                "0.0.0.0",  // Listen on all interfaces
-                config_.sensor_actuator_server.udp_port,
-                true  // Bind immediately
+                config_.sensor_actuator_server.udp_ip,  
+                config_.sensor_actuator_server.udp_port
             );
             
             PRINT_DEBUG("[ClientApp] All sockets created successfully");
@@ -225,164 +230,200 @@ private:
     // ===================================================================
     
     /**
-     * @brief TCP thread function
-     * Handles:
-     * - Connect to both servers via TCP
-     * - Receive threshold updates from host
-     * - Send LED state to both servers
+     * @brief Send LED state to both TCP sockets
+     * @param led_on LED state (true=ON, false=OFF)
      */
-    void tcpThreadFunc() {
-        PRINT_INFO("[TCP Thread] Started");
+    void sendLedState(bool led_on) {
+        std::string led_message = "LED:" + std::string(led_on ? "ON" : "OFF");
         
-        // Connect to host TCP server
-        if (!host_tcp_socket_->connect(config_.host_server.tcp_ip, config_.host_server.tcp_port)) {
-            PRINT_ERROR("[TCP Thread] Failed to connect to host server");
-            running_ = false;
-            return;
-        }
-        PRINT_INFO("[TCP Thread] Connected to host server at " + 
-                   config_.host_server.tcp_ip + ":" + 
-                   std::to_string(config_.host_server.tcp_port));
-        
-        // Connect to sensor TCP server
-        if (!sensor_tcp_socket_->connect(config_.sensor_actuator_server.tcp_ip, 
-                                          config_.sensor_actuator_server.tcp_port)) {
-            PRINT_ERROR("[TCP Thread] Failed to connect to sensor/actuator server");
-            running_ = false;
-            return;
-        }
-        PRINT_INFO("[TCP Thread] Connected to sensor/actuator server at " + 
-                   config_.sensor_actuator_server.tcp_ip + ":" + 
-                   std::to_string(config_.sensor_actuator_server.tcp_port));
-        
-        char buffer[1024];
-        bool last_led_state = led_state_;
-        
-        while (running_) {
-            // Check for threshold updates from host
-            int bytes = host_tcp_socket_->receive(buffer, sizeof(buffer) - 1);
-            if (bytes > 0) {
-                buffer[bytes] = '\0';
-                std::string message(buffer);
-                
-                // Parse threshold update (format: "THRESHOLD:25.5")
-                if (message.find("THRESHOLD:") == 0) {
-                    try {
-                        float new_threshold = std::stof(message.substr(10));
-                        {
-                            std::lock_guard<std::mutex> lock(state_mutex_);
-                            temperature_threshold_ = new_threshold;
-                        }
-                        PRINT_INFO("[TCP Thread] Updated threshold to " + std::to_string(new_threshold) + "°C");
-                    } catch (const std::exception& e) {
-                        PRINT_ERROR("[TCP Thread] Failed to parse threshold: " + std::string(e.what()));
-                    }
-                }
-            }
-            
-            // Send LED state if changed
-            bool current_led_state;
-            {
-                std::lock_guard<std::mutex> lock(state_mutex_);
-                current_led_state = led_state_;
-            }
-            
-            if (current_led_state != last_led_state) {
-                std::string led_message = "LED:" + std::string(current_led_state ? "ON" : "OFF");
-                
-                // Send to host
-                if (host_tcp_socket_->send(led_message) > 0) {
-                    PRINT_INFO("[TCP Thread] Sent LED state to host: " + 
-                               std::string(current_led_state ? "ON" : "OFF"));
-                }
-                
-                // Send to sensor/actuator
-                if (sensor_tcp_socket_->send(led_message) > 0) {
-                    PRINT_INFO("[TCP Thread] Sent LED state to sensor/actuator: " + 
-                               std::string(current_led_state ? "ON" : "OFF"));
-                }
-                
-                last_led_state = current_led_state;
-            }
-            
-            // Sleep to avoid busy-waiting
-            std::this_thread::sleep_for(std::chrono::milliseconds(config_.check_interval));
+        // Send to host
+        if (host_tcp_socket_ && host_tcp_socket_->send(led_message) > 0) {
+            PRINT_INFO("[LED Update] Sent to host: " + std::string(led_on ? "ON" : "OFF"));
         }
         
-        PRINT_INFO("[TCP Thread] Stopped");
+        // Send to sensor/actuator
+        if (sensor_tcp_socket_ && sensor_tcp_socket_->send(led_message) > 0) {
+            PRINT_INFO("[LED Update] Sent to sensor/actuator: " + std::string(led_on ? "ON" : "OFF"));
+        }
     }
     
     /**
-     * @brief UDP thread function
+     * @brief Callback for handling threshold updates from host
+     * @param message The received message
+     */
+    void onThresholdUpdate(const std::string& message) {
+        // Parse threshold update (format: "THRESHOLD:25.5")
+        if (message.find("THRESHOLD:") == 0) {
+            try {
+                float new_threshold = std::stof(message.substr(10));
+                {
+                    std::lock_guard<std::mutex> lock(state_mutex_);
+                    temperature_threshold_ = new_threshold;
+                }
+                PRINT_INFO("[Threshold Monitor] Updated threshold to " + std::to_string(new_threshold) + "°C");
+            } catch (const std::exception& e) {
+                PRINT_ERROR("[Threshold Monitor] Failed to parse threshold: " + std::string(e.what()));
+            }
+        }
+    }
+    
+    /**
+     * @brief Callback for handling temperature data from sensor
+     * @param message The received message
+     */
+    void onTemperatureReceived(const std::string& message) {
+        // Parse temperature (format: "TEMP:25.5")
+        if (message.find("TEMP:") == 0) {
+            try {
+                float new_temp = std::stof(message.substr(5));
+                
+                // Update current temperature
+                float threshold;
+                bool should_turn_on_led;
+                {
+                    std::lock_guard<std::mutex> lock(state_mutex_);
+                    current_temperature_ = new_temp;
+                    threshold = temperature_threshold_;
+                    should_turn_on_led = (new_temp > threshold);
+                    
+                    // Update LED state if needed
+                    if (led_state_ != should_turn_on_led) {
+                        led_state_ = should_turn_on_led;
+                        PRINT_INFO("[Temperature Monitor] Temperature " + std::to_string(new_temp) + 
+                                  "°C " + (should_turn_on_led ? "exceeds" : "below") + 
+                                  " threshold " + std::to_string(threshold) + 
+                                  "°C - LED turned " + (should_turn_on_led ? "ON" : "OFF"));
+                    }
+                }
+                
+                // Send LED state immediately if changed
+                if (should_turn_on_led != led_state_) {
+                    sendLedState(should_turn_on_led);
+                }
+                
+                PRINT_DEBUG("[Temperature Monitor] Received temperature: " + std::to_string(new_temp) + "°C");
+                
+                // Forward temperature to host
+                if (host_udp_socket_->send(message) > 0) {
+                    PRINT_TRACE("[Temperature Monitor] Forwarded temperature to host");
+                }
+                
+            } catch (const std::exception& e) {
+                PRINT_ERROR("[Temperature Monitor] Failed to parse temperature: " + std::string(e.what()));
+            }
+        }
+    }
+    
+    /**
+     * @brief Generic message receiver with callback
+     * @param socket Pointer to socket to receive from
+     * @param buffer Buffer for received data
+     * @param buffer_size Size of buffer
+     * @param callback Callback function to handle received message
+     */
+    void receiveWithCallback(Socket* socket, char* buffer, int buffer_size, MessageCallback callback) {
+        int bytes = socket->receive(buffer, buffer_size - 1);
+        if (bytes > 0) {
+            buffer[bytes] = '\0';
+            std::string message(buffer);
+            callback(message);
+        }
+    }
+    
+    /**
+     * @brief Threshold monitor thread function
      * Handles:
-     * - Receive temperature from sensor/actuator via UDP
+     * - Connect to host server via TCP
+     * - Receive threshold updates from host server (blocking - waits for data)
+     */
+    void thresholdMonitorThreadFunc() {
+        PRINT_INFO("[Threshold Monitor] Started");
+        
+        // Connect to host TCP server
+        if (!host_tcp_socket_->connect(config_.host_server.tcp_ip, config_.host_server.tcp_port)) {
+            PRINT_ERROR("[Threshold Monitor] Failed to connect to host server");
+            running_ = false;
+            return;
+        }
+        PRINT_INFO("[Threshold Monitor] Connected to host server at " + 
+                   config_.host_server.tcp_ip + ":" + 
+                   std::to_string(config_.host_server.tcp_port));
+        
+        // Keep socket in blocking mode - will wait for data
+        char buffer[1024];
+        
+        while (running_) {
+            // Blocking receive - callback triggered when data arrives
+            receiveWithCallback(
+                host_tcp_socket_.get(), 
+                buffer, 
+                sizeof(buffer),
+                [this](const std::string& msg) { onThresholdUpdate(msg); }
+            );
+        }
+        
+        PRINT_INFO("[Threshold Monitor] Stopped");
+    }
+    
+    /**
+     * @brief Temperature monitor thread function
+     * Handles:
+     * - Connect to sensor/actuator server via TCP (for LED state)
+     * - Communicate with sensor/actuator via UDP (send initial request, then receive temperature)
      * - Forward temperature to host via UDP
      * - Check threshold and update LED state
+     * - Send LED state updates to both servers via TCP
      */
-    void udpThreadFunc() {
-        PRINT_INFO("[UDP Thread] Started");
+    void temperatureMonitorThreadFunc() {
+        PRINT_INFO("[Temperature Monitor] Started");
         
-        // Set remote endpoint for host UDP
-        if (!host_udp_socket_->connect(config_.host_server.udp_ip, config_.host_server.udp_port)) {
-            PRINT_ERROR("[UDP Thread] Failed to set host UDP endpoint");
+        // Connect to sensor TCP server for LED control
+        if (!sensor_tcp_socket_->connect(config_.sensor_actuator_server.tcp_ip, 
+                                          config_.sensor_actuator_server.tcp_port)) {
+            PRINT_ERROR("[Temperature Monitor] Failed to connect to sensor/actuator server");
+            running_ = false;
+            return;
+        }
+        PRINT_INFO("[Temperature Monitor] Connected to sensor/actuator server at " + 
+                   config_.sensor_actuator_server.tcp_ip + ":" + 
+                   std::to_string(config_.sensor_actuator_server.tcp_port));
+        
+        // Set remote endpoint for sensor UDP
+        if (!sensor_udp_socket_->connect(config_.sensor_actuator_server.udp_ip, 
+                                          config_.sensor_actuator_server.udp_port)) {
+            PRINT_ERROR("[Temperature Monitor] Failed to connect to sensor/actuator UDP");
             running_ = false;
             return;
         }
         
-        PRINT_INFO("[UDP Thread] Ready to receive temperature data on port " + 
+        // Set remote endpoint for host UDP
+        if (!host_udp_socket_->connect(config_.host_server.udp_ip, config_.host_server.udp_port)) {
+            PRINT_ERROR("[Temperature Monitor] Failed to set host UDP endpoint");
+            running_ = false;
+            return;
+        }
+        
+        PRINT_INFO("[Temperature Monitor] Ready to communicate with sensor/actuator at " + 
+                   config_.sensor_actuator_server.udp_ip + ":" + 
                    std::to_string(config_.sensor_actuator_server.udp_port));
         
+        // Keep UDP socket in blocking mode - will wait for data
         char buffer[1024];
         
         while (running_) {
-            // Receive temperature from sensor/actuator
-            int bytes = sensor_udp_socket_->receive(buffer, sizeof(buffer) - 1);
-            if (bytes > 0) {
-                buffer[bytes] = '\0';
-                std::string message(buffer);
-                
-                // Parse temperature (format: "TEMP:25.5")
-                if (message.find("TEMP:") == 0) {
-                    try {
-                        float new_temp = std::stof(message.substr(5));
-                        
-                        // Update current temperature
-                        float threshold;
-                        bool should_turn_on_led;
-                        {
-                            std::lock_guard<std::mutex> lock(state_mutex_);
-                            current_temperature_ = new_temp;
-                            threshold = temperature_threshold_;
-                            should_turn_on_led = (new_temp > threshold);
-                            
-                            // Update LED state if needed
-                            if (led_state_ != should_turn_on_led) {
-                                led_state_ = should_turn_on_led;
-                                PRINT_INFO("[UDP Thread] Temperature " + std::to_string(new_temp) + 
-                                          "°C " + (should_turn_on_led ? "exceeds" : "below") + 
-                                          " threshold " + std::to_string(threshold) + 
-                                          "°C - LED turned " + (should_turn_on_led ? "ON" : "OFF"));
-                            }
-                        }
-                        
-                        PRINT_DEBUG("[UDP Thread] Received temperature: " + std::to_string(new_temp) + "°C");
-                        
-                        // Forward temperature to host
-                        if (host_udp_socket_->send(message) > 0) {
-                            PRINT_TRACE("[UDP Thread] Forwarded temperature to host");
-                        }
-                        
-                    } catch (const std::exception& e) {
-                        PRINT_ERROR("[UDP Thread] Failed to parse temperature: " + std::string(e.what()));
-                    }
-                }
-            }
+            // Blocking receive - callback triggered when data arrives
+            receiveWithCallback(
+                sensor_udp_socket_.get(),
+                buffer,
+                sizeof(buffer),
+                [this](const std::string& msg) { onTemperatureReceived(msg); }
+            );
             
-            // Small sleep to avoid busy-waiting
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            // Sleep to control receive rate
+            std::this_thread::sleep_for(std::chrono::milliseconds(config_.check_interval));
         }
         
-        PRINT_INFO("[UDP Thread] Stopped");
+        PRINT_INFO("[Temperature Monitor] Stopped");
     }
 };
 

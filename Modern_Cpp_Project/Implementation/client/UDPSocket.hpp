@@ -40,7 +40,7 @@ public:
     // ===================================================================
     
     /**
-     * @brief Constructor for client mode (sending)
+     * @brief Constructor for client mode (sending/receiving)
      * @param remote_ip Remote IP address
      * @param remote_port Remote port number
      */
@@ -49,7 +49,7 @@ public:
           local_port_(0), is_bound_(false) {
         try {
             socket_ = std::make_unique<asio::ip::udp::socket>(io_context_, asio::ip::udp::v4());
-            PRINT_DEBUG("[UDPSocket] Created UDP socket for sending to " + remote_ip + ":" + std::to_string(remote_port));
+            PRINT_DEBUG("[UDPSocket] Created UDP socket for communicating with " + remote_ip + ":" + std::to_string(remote_port));
         } catch (const std::exception& e) {
             PRINT_ERROR("[UDPSocket] Failed to create socket: " + std::string(e.what()));
             throw;
@@ -264,20 +264,6 @@ public:
         }
     }
     
-    /**
-     * @brief Set socket to non-blocking mode
-     * @param non_blocking If true, set non-blocking
-     */
-    void setNonBlocking(bool non_blocking) {
-        try {
-            if (socket_ && socket_->is_open()) {
-                socket_->non_blocking(non_blocking);
-                PRINT_DEBUG("[UDPSocket] Set non-blocking mode: " + std::string(non_blocking ? "true" : "false"));
-            }
-        } catch (const std::exception& e) {
-            PRINT_ERROR("[UDPSocket] Failed to set non-blocking: " + std::string(e.what()));
-        }
-    }
 };
 
 // ===================================================================
