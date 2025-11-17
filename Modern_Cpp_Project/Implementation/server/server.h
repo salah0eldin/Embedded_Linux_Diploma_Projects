@@ -11,6 +11,8 @@
 // INCLUDES
 // ===================================================================
 #include <QMainWindow>
+#include <QDesktopServices>
+#include <QUrl>
 
 // ===================================================================
 // FORWARD DECLARATIONS
@@ -45,6 +47,14 @@ public:
      * @brief Destructor
      */
     ~server();
+
+// ===================================================================
+// PRIVATE SLOTS
+// ===================================================================
+private slots:
+    void onFacebookClicked();
+    void onLinkedInClicked();
+    void onInstagramClicked();
 
 // ===================================================================
 // PRIVATE MEMBERS

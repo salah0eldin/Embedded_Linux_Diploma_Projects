@@ -1,0 +1,9 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource>
+        <file alias="facebook.png">../../Files/Resources/Images and icons/facebook-app-symbol.png</file>
+        <file alias="linkedin.png">../../Files/Resources/Images and icons/linkedin.png</file>
+        <file alias="instagram.png">../../Files/Resources/Images and icons/instagram.png</file>
+        <file alias="background.jpg">../../Files/Resources/Images and icons/Background.jpg</file>
+    </qresource>
+</RCC>
