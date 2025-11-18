@@ -44,6 +44,9 @@ add_executable(client Client.cpp)
 # Include Asio headers
 target_include_directories(client PRIVATE ${asio_SOURCE_DIR}/asio/include)
 
+# Include shared headers
+target_include_directories(client PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include)
+
 # Define ASIO_STANDALONE for header-only mode
 target_compile_definitions(client PRIVATE ASIO_STANDALONE)
 

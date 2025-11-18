@@ -10,6 +10,7 @@
 // ===================================================================
 #include "server.h"
 #include "./ui_server.h"
+#include "config.h"
 #include <QDebug>
 #include <thread>
 
@@ -29,10 +30,10 @@ server::server(const QString& configFile, QWidget *parent)
     config_ = ServerConfigParser::parseConfig(configFile.toStdString());
     current_threshold_ = config_.initial_threshold;
     
-    qInfo() << "Loaded configuration from:" << configFile;
-    qInfo() << "TCP Port:" << config_.tcp_port;
-    qInfo() << "UDP Port:" << config_.udp_port;
-    qInfo() << "Initial Threshold:" << config_.initial_threshold << "°C";
+    PRINT_INFO("Loaded configuration from: " << configFile.toStdString());
+    PRINT_INFO("TCP Port: " << config_.tcp_port);
+    PRINT_INFO("UDP Port: " << config_.udp_port);
+    PRINT_INFO("Initial Threshold: " << config_.initial_threshold << "°C");
     
     // Connect social media buttons
     connect(ui->btnFacebook, &QPushButton::clicked, this, &server::onFacebookClicked);
@@ -84,7 +85,7 @@ void server::onInstagramClicked() {
 // ===================================================================
 void server::onThresholdChanged(double value) {
     current_threshold_ = static_cast<float>(value);
-    qInfo() << "Threshold changed to:" << current_threshold_ << "°C";
+    PRINT_INFO("Threshold changed to: " << current_threshold_ << "°C");
     sendThresholdToClient(current_threshold_);
 }
 
@@ -95,7 +96,7 @@ void server::updateTemperatureDisplay(float temperature) {
     current_temperature_ = temperature;
     QString tempStr = QString::number(temperature, 'f', 1) + "°C";
     ui->labelTemperatureValue->setText(tempStr);
-    qDebug() << "Temperature updated:" << tempStr;
+    PRINT_DEBUG("Temperature updated: " << tempStr.toStdString());
 }
 
 // ===================================================================
@@ -105,14 +106,14 @@ void server::updateLedStatus(bool ledOn) {
     current_led_state_ = ledOn;
     QString statusText = QString("💡 LED Status: %1").arg(ledOn ? "ON" : "OFF");
     ui->labelLedStatus->setText(statusText);
-    qInfo() << "LED status updated:" << (ledOn ? "ON" : "OFF");
+    PRINT_INFO("LED status updated: " << (ledOn ? "ON" : "OFF"));
 }
 
 // ===================================================================
 // START SERVER
 // ===================================================================
 void server::startServer() {
-    qInfo() << "Starting Host Server...";
+    PRINT_INFO("Starting Host Server...");
     
     try {
         // Create TCP socket for threshold updates (server mode)
@@ -137,12 +138,12 @@ void server::startServer() {
         });
         udp_thread_->start();
         
-        qInfo() << "Host Server started successfully";
-        qInfo() << "TCP Server listening on port" << config_.tcp_port;
-        qInfo() << "UDP Server listening on port" << config_.udp_port;
+    PRINT_INFO("Host Server started successfully");
+    PRINT_INFO("TCP Server listening on port " << config_.tcp_port);
+    PRINT_INFO("UDP Server listening on port " << config_.udp_port);
         
     } catch (const std::exception& e) {
-        qCritical() << "Failed to start server:" << e.what();
+        PRINT_ERROR("Failed to start server: " << e.what());
     }
 }
 
@@ -154,7 +155,7 @@ void server::stopServer() {
         return;
     }
     
-    qInfo() << "Stopping Host Server...";
+    PRINT_INFO("Stopping Host Server...");
     running_ = false;
     
     // Close sockets
@@ -175,22 +176,21 @@ void server::stopServer() {
         udp_thread_->wait();
     }
     
-    qInfo() << "Host Server stopped";
+    PRINT_INFO("Host Server stopped");
 }
 
 // ===================================================================
 // TCP LISTENER THREAD
 // ===================================================================
 void server::tcpListenerThread() {
-    qInfo() << "[TCP Thread] Started - Waiting for client connection...";
+    PRINT_INFO("[TCP Thread] Started - Waiting for client connection...");
     
     // Wait for client to connect
     if (!tcp_socket_->waitForConnect()) {
-        qCritical() << "[TCP Thread] Failed to accept client connection";
+        PRINT_ERROR("[TCP Thread] Failed to accept client connection");
         return;
     }
-    
-    qInfo() << "[TCP Thread] Client connected";
+    PRINT_INFO("[TCP Thread] Client connected");
     
     // Send initial threshold to client
     sendThresholdToClient(current_threshold_);
@@ -202,7 +202,7 @@ void server::tcpListenerThread() {
         if (bytes > 0) {
             buffer[bytes] = '\0';
             std::string message(buffer);
-            qDebug() << "[TCP Thread] Received:" << QString::fromStdString(message);
+            PRINT_DEBUG("[TCP Thread] Received: " << message);
             
             // Parse LED status updates from client
             if (message.find("LED:") == 0) {
@@ -212,19 +212,18 @@ void server::tcpListenerThread() {
                 }, Qt::QueuedConnection);
             }
         } else if (bytes == 0) {
-            qInfo() << "[TCP Thread] Client disconnected";
+            PRINT_INFO("[TCP Thread] Client disconnected");
             break;
         }
     }
-    
-    qInfo() << "[TCP Thread] Stopped";
+    PRINT_INFO("[TCP Thread] Stopped");
 }
 
 // ===================================================================
 // UDP RECEIVER THREAD
 // ===================================================================
 void server::udpReceiverThread() {
-    qInfo() << "[UDP Thread] Started - Listening for temperature data...";
+    PRINT_INFO("[UDP Thread] Started - Listening for temperature data...");
     
     char buffer[1024];
     while (running_) {
@@ -237,7 +236,7 @@ void server::udpReceiverThread() {
             if (message.find("TEMP:") == 0) {
                 try {
                     float temperature = std::stof(message.substr(5));
-                    qDebug() << "[UDP Thread] Received temperature:" << temperature << "°C";
+                    PRINT_DEBUG("[UDP Thread] Received temperature: " << temperature << "°C");
                     
                     // Update GUI from main thread
                     QMetaObject::invokeMethod(this, [this, temperature]() {
@@ -245,7 +244,7 @@ void server::udpReceiverThread() {
                     }, Qt::QueuedConnection);
                     
                 } catch (const std::exception& e) {
-                    qCritical() << "[UDP Thread] Failed to parse temperature:" << e.what();
+                    PRINT_ERROR("[UDP Thread] Failed to parse temperature: " << e.what());
                 }
             }
         }
@@ -255,7 +254,7 @@ void server::udpReceiverThread() {
     }
 
     // UDP thread exiting
-    qInfo() << "[UDP Thread] Stopped";
+    PRINT_INFO("[UDP Thread] Stopped");
 
 }
 // ===================================================================
@@ -263,7 +262,7 @@ void server::udpReceiverThread() {
 // ===================================================================
 void server::sendThresholdToClient(float threshold) {
     if (!tcp_socket_) {
-        qWarning() << "TCP socket not initialized";
+        PRINT_ERROR("TCP socket not initialized");
         return;
     }
     
@@ -271,9 +270,9 @@ void server::sendThresholdToClient(float threshold) {
     int sent = tcp_socket_->send(message);
     
     if (sent > 0) {
-        qInfo() << "Sent threshold to client:" << threshold << "°C";
+        PRINT_INFO("Sent threshold to client: " << threshold << "°C");
     } else {
-        qWarning() << "Failed to send threshold to client";
+        PRINT_ERROR("Failed to send threshold to client");
     }
 }
 

@@ -42,10 +42,6 @@ set(PROJECT_SOURCES
         server.h
         server.ui
         resources.qrc
-        config.h
-        Socket.hpp
-        TCPSocket.hpp
-        UDPSocket.hpp
         ServerConfigParser.hpp
 )
 
@@ -87,6 +83,10 @@ target_include_directories(server PRIVATE ${asio_SOURCE_DIR}/asio/include)
 # Define ASIO_STANDALONE for header-only mode
 target_compile_definitions(server PRIVATE ASIO_STANDALONE)
 
+# Include shared headers directory
+target_include_directories(server PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include)
+
+# Also keep server source dir on include path for generated UI headers
 target_include_directories(server PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
