@@ -1,3 +1,6 @@
 {
-    "cmake.sourceDirectory": "/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client"
+    "cmake.sourceDirectory": "/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/client",
+    "files.associations": {
+        "charconv": "cpp"
+    }
 }

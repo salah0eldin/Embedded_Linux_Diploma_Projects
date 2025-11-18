@@ -13,8 +13,8 @@
 #include <QMainWindow>
 #include <QDesktopServices>
 #include <QUrl>
-#include <QThread>
 #include <QTimer>
+#include <thread>
 #include <memory>
 #include <atomic>
 #include "TCPSocket.hpp"
@@ -91,8 +91,8 @@ private:
     std::unique_ptr<UDPSocket> udp_socket_;
     
     // Threading
-    std::unique_ptr<QThread> tcp_thread_;
-    std::unique_ptr<QThread> udp_thread_;
+    std::unique_ptr<std::thread> tcp_thread_;
+    std::unique_ptr<std::thread> udp_thread_;
     std::atomic<bool> running_;
     
     // State

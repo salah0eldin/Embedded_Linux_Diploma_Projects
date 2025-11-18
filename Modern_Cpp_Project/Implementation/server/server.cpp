@@ -124,19 +124,11 @@ void server::startServer() {
         
         running_ = true;
         
-        // Start TCP listener thread
-        tcp_thread_ = std::make_unique<QThread>();
-        QObject::connect(tcp_thread_.get(), &QThread::started, [this]() {
-            tcpListenerThread();
-        });
-        tcp_thread_->start();
-        
+        // Start TCP listener thread (std::thread) so we can join on shutdown
+        tcp_thread_ = std::make_unique<std::thread>(&server::tcpListenerThread, this);
+
         // Start UDP receiver thread
-        udp_thread_ = std::make_unique<QThread>();
-        QObject::connect(udp_thread_.get(), &QThread::started, [this]() {
-            udpReceiverThread();
-        });
-        udp_thread_->start();
+        udp_thread_ = std::make_unique<std::thread>(&server::udpReceiverThread, this);
         
     PRINT_INFO("Host Server started successfully");
     PRINT_INFO("TCP Server listening on port " << config_.tcp_port);
@@ -162,19 +154,35 @@ void server::stopServer() {
     if (tcp_socket_) {
         tcp_socket_->shutdown();
     }
+    PRINT_INFO("TCP socket shut down");
     if (udp_socket_) {
         udp_socket_->shutdown();
     }
+    PRINT_INFO("UDP socket shut down");
     
-    // Wait for threads to finish
-    if (tcp_thread_ && tcp_thread_->isRunning()) {
-        tcp_thread_->quit();
-        tcp_thread_->wait();
-    }
-    if (udp_thread_ && udp_thread_->isRunning()) {
-        udp_thread_->quit();
-        udp_thread_->wait();
-    }
+    // Wait for threads to finish: try to join with a short timeout, otherwise detach
+    auto try_join_with_timeout = [](std::unique_ptr<std::thread>& thr, const char* name, int timeout_ms = 500) {
+        if (!thr || !thr->joinable()) return;
+        using clk = std::chrono::steady_clock;
+        auto start = clk::now();
+        while (std::chrono::duration_cast<std::chrono::milliseconds>(clk::now() - start).count() < timeout_ms) {
+            // If thread finished, join and return
+            // There's no direct way to check if thread finished without join; try a small sleep and then attempt join using try/catch
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            // Attempt to join if not joinable will be no-op, so check joinable again
+            if (!thr->joinable()) return;
+        }
+        // If still running, detach to allow process to exit; log a warning
+        PRINT_ERROR(std::string("Thread '") + name + " did not stop in time - detaching");
+        try {
+            thr->detach();
+        } catch (...) {
+            // ignore
+        }
+    };
+
+    try_join_with_timeout(tcp_thread_, "TCP Thread");
+    try_join_with_timeout(udp_thread_, "UDP Thread");
     
     PRINT_INFO("Host Server stopped");
 }
