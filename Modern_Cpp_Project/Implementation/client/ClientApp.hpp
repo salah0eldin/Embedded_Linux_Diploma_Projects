@@ -46,8 +46,8 @@ private:
     std::unique_ptr<TCPSocket> sensor_tcp_socket_;
     
     // UDP Sockets
-    std::unique_ptr<UDPSocket> host_udp_socket_;           // Send temp to host
-    std::unique_ptr<UDPSocket> sensor_udp_socket_;         // Receive temp from sensor
+    std::unique_ptr<UDPSocket> host_udp_socket_;           
+    std::unique_ptr<UDPSocket> sensor_udp_socket_;         
     
     // Threading
     std::thread  threshold_monitor_thread_;
