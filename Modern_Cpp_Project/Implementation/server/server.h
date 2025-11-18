@@ -13,6 +13,13 @@
 #include <QMainWindow>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QThread>
+#include <QTimer>
+#include <memory>
+#include <atomic>
+#include "TCPSocket.hpp"
+#include "UDPSocket.hpp"
+#include "ServerConfigParser.hpp"
 
 // ===================================================================
 // FORWARD DECLARATIONS
@@ -39,9 +46,10 @@ class server : public QMainWindow {
 public:
     /**
      * @brief Constructor
+     * @param configFile Path to YAML configuration file
      * @param parent Parent widget (default: nullptr)
      */
-    server(QWidget *parent = nullptr);
+    server(const QString& configFile, QWidget *parent = nullptr);
     
     /**
      * @brief Destructor
@@ -55,12 +63,42 @@ private slots:
     void onFacebookClicked();
     void onLinkedInClicked();
     void onInstagramClicked();
+    void onThresholdChanged(double value);
+    void updateTemperatureDisplay(float temperature);
+    void updateLedStatus(bool ledOn);
+
+// ===================================================================
+// PRIVATE METHODS
+// ===================================================================
+private:
+    void startServer();
+    void stopServer();
+    void tcpListenerThread();
+    void udpReceiverThread();
+    void sendThresholdToClient(float threshold);
 
 // ===================================================================
 // PRIVATE MEMBERS
 // ===================================================================
 private:
     Ui::server *ui;
+    
+    // Configuration
+    ServerConfig config_;
+    
+    // Socket members
+    std::unique_ptr<TCPSocket> tcp_socket_;
+    std::unique_ptr<UDPSocket> udp_socket_;
+    
+    // Threading
+    std::unique_ptr<QThread> tcp_thread_;
+    std::unique_ptr<QThread> udp_thread_;
+    std::atomic<bool> running_;
+    
+    // State
+    float current_threshold_;
+    float current_temperature_;
+    bool current_led_state_;
 };
 
 // ===================================================================

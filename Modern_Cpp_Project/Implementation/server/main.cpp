@@ -16,7 +16,16 @@
 // ===================================================================
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
-    server w;
+    
+    // Default config file path (relative to binary location)
+    QString configFile = "../config.yaml";
+    
+    // Check if config file path provided as command-line argument
+    if (argc > 1) {
+        configFile = QString(argv[1]);
+    }
+    
+    server w(configFile);
     w.show();
     return a.exec();
 }

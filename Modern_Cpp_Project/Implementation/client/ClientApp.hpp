@@ -112,7 +112,7 @@ public:
         // Start threads
         running_ = true;
         threshold_monitor_thread_ = std::thread(&ClientApp::thresholdMonitorThreadFunc, this);
-        temperature_monitor_thread_ = std::thread(&ClientApp::temperatureMonitorThreadFunc, this);
+        // temperature_monitor_thread_ = std::thread(&ClientApp::temperatureMonitorThreadFunc, this);
         
         PRINT_INFO("[ClientApp] Application started successfully");
         return true;
@@ -129,6 +129,9 @@ public:
         PRINT_INFO("[ClientApp] Stopping client application...");
         running_ = false;
         
+        // Close sockets first to unblock any blocking operations
+        closeSockets();
+        
         // Wait for threads to finish
         if (threshold_monitor_thread_.joinable()) {
             threshold_monitor_thread_.join();
@@ -136,9 +139,6 @@ public:
         if (temperature_monitor_thread_.joinable()) {
             temperature_monitor_thread_.join();
         }
-        
-        // Close sockets
-        closeSockets();
         
         PRINT_INFO("[ClientApp] Application stopped");
     }
@@ -320,13 +320,19 @@ private:
      * @param buffer Buffer for received data
      * @param buffer_size Size of buffer
      * @param callback Callback function to handle received message
+     * @return 1 if data received and processed, 0 if no data available, -1 if connection closed/error
      */
-    void receiveWithCallback(Socket* socket, char* buffer, int buffer_size, MessageCallback callback) {
+    int receiveWithCallback(Socket* socket, char* buffer, int buffer_size, MessageCallback callback) {
         int bytes = socket->receive(buffer, buffer_size - 1);
         if (bytes > 0) {
             buffer[bytes] = '\0';
             std::string message(buffer);
             callback(message);
+            return 1;  // Data received and processed
+        } else if (bytes == 0) {
+            return 0;  // No data available (would_block)
+        } else {
+            return -1;  // Connection closed or error
         }
     }
     
@@ -343,23 +349,37 @@ private:
         if (!host_tcp_socket_->connect(config_.host_server.tcp_ip, config_.host_server.tcp_port)) {
             PRINT_ERROR("[Threshold Monitor] Failed to connect to host server");
             running_ = false;
-            return;
+            return;  // Exit thread gracefully
         }
         PRINT_INFO("[Threshold Monitor] Connected to host server at " + 
                    config_.host_server.tcp_ip + ":" + 
                    std::to_string(config_.host_server.tcp_port));
         
-        // Keep socket in blocking mode - will wait for data
+        // Set socket to non-blocking mode
+        host_tcp_socket_->setNonBlocking(true);
+        
         char buffer[1024];
         
         while (running_) {
-            // Blocking receive - callback triggered when data arrives
-            receiveWithCallback(
-                host_tcp_socket_.get(), 
-                buffer, 
+            int status = receiveWithCallback(
+                host_tcp_socket_.get(),
+                buffer,
                 sizeof(buffer),
                 [this](const std::string& msg) { onThresholdUpdate(msg); }
             );
+            
+            if (status > 0) {
+                // Data received and processed
+                continue;
+            } else if (status == 0) {
+                // No data available, sleep briefly
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            } else {
+                // Connection closed or error
+                PRINT_ERROR("[Threshold Monitor] Connection closed, stopping application");
+                running_ = false;
+                break;  // Exit loop and let thread terminate gracefully
+            }
         }
         
         PRINT_INFO("[Threshold Monitor] Stopped");
@@ -382,7 +402,7 @@ private:
                                           config_.sensor_actuator_server.tcp_port)) {
             PRINT_ERROR("[Temperature Monitor] Failed to connect to sensor/actuator server");
             running_ = false;
-            return;
+            return;  // Exit thread gracefully
         }
         PRINT_INFO("[Temperature Monitor] Connected to sensor/actuator server at " + 
                    config_.sensor_actuator_server.tcp_ip + ":" + 
@@ -393,21 +413,23 @@ private:
                                           config_.sensor_actuator_server.udp_port)) {
             PRINT_ERROR("[Temperature Monitor] Failed to connect to sensor/actuator UDP");
             running_ = false;
-            return;
+            return;  // Exit thread gracefully
         }
         
         // Set remote endpoint for host UDP
         if (!host_udp_socket_->connect(config_.host_server.udp_ip, config_.host_server.udp_port)) {
             PRINT_ERROR("[Temperature Monitor] Failed to set host UDP endpoint");
             running_ = false;
-            return;
+            return;  // Exit thread gracefully
         }
         
         PRINT_INFO("[Temperature Monitor] Ready to communicate with sensor/actuator at " + 
                    config_.sensor_actuator_server.udp_ip + ":" + 
                    std::to_string(config_.sensor_actuator_server.udp_port));
         
-        // Keep UDP socket in blocking mode - will wait for data
+        // Set UDP socket to non-blocking mode
+        sensor_udp_socket_->setNonBlocking(true);
+        
         char buffer[1024];
         
         while (running_) {

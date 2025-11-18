@@ -11,11 +11,11 @@
 // INCLUDES
 // ===================================================================
 #include "Socket.hpp"
-#include "config.h"
 #include <asio.hpp>
 #include <iostream>
 #include <string>
 #include <memory>
+#include <QDebug>
 
 // ===================================================================
 // UDP SOCKET CLASS
@@ -49,9 +49,9 @@ public:
           local_port_(0), is_bound_(false) {
         try {
             socket_ = std::make_unique<asio::ip::udp::socket>(io_context_, asio::ip::udp::v4());
-            PRINT_DEBUG("[UDPSocket] Created UDP socket for communicating with " + remote_ip + ":" + std::to_string(remote_port));
+            qDebug() << "[UDPSocket] Created UDP socket for communicating with " + remote_ip + ":" + std::to_string(remote_port);
         } catch (const std::exception& e) {
-            PRINT_ERROR("[UDPSocket] Failed to create socket: " + std::string(e.what()));
+            qCritical() << "[UDPSocket] Failed to create socket: " + std::string(e.what());
             throw;
         }
     }
@@ -75,17 +75,17 @@ public:
                 );
                 socket_->bind(endpoint);
                 is_bound_ = true;
-                PRINT_DEBUG("[UDPSocket] Bound UDP socket to " + local_ip + ":" + std::to_string(local_port));
+                qDebug() << "[UDPSocket] Bound UDP socket to " + local_ip + ":" + std::to_string(local_port);
             }
         } catch (const std::exception& e) {
-            PRINT_ERROR("[UDPSocket] Failed to create/bind socket: " + std::string(e.what()));
+            qCritical() << "[UDPSocket] Failed to create/bind socket: " + std::string(e.what());
             throw;
         }
     }
     
     virtual ~UDPSocket() {
         if (socket_ && socket_->is_open()) {
-            PRINT_DEBUG("[UDPSocket] Closing UDP socket");
+            qDebug() << "[UDPSocket] Closing UDP socket";
             socket_->close();
         }
     }
@@ -99,7 +99,7 @@ public:
      * @return Always returns true for UDP
      */
     bool waitForConnect() override {
-        PRINT_DEBUG("[UDPSocket] waitForConnect called (no-op for UDP)");
+        qDebug() << "[UDPSocket] waitForConnect called (no-op for UDP)";
         return true;
     }
     
@@ -120,17 +120,17 @@ public:
                 resolver.resolve(asio::ip::udp::v4(), ip, std::to_string(port));
             
             if (endpoints.empty()) {
-                PRINT_ERROR("[UDPSocket] Failed to resolve " + ip + ":" + std::to_string(port));
+                qCritical() << "[UDPSocket] Failed to resolve " + ip + ":" + std::to_string(port);
                 return false;
             }
             
             remote_endpoint_ = *endpoints.begin();
             
-            PRINT_INFO("[UDPSocket] Connected (set remote endpoint) to " + ip + ":" + std::to_string(port));
+            qInfo() << "[UDPSocket] Connected (set remote endpoint) to " + ip + ":" + std::to_string(port);
             return true;
             
         } catch (const std::exception& e) {
-            PRINT_ERROR("[UDPSocket] Connect failed: " + std::string(e.what()));
+            qCritical() << "[UDPSocket] Connect failed: " + std::string(e.what());
             return false;
         }
     }
@@ -143,7 +143,7 @@ public:
     int send(const std::string& message) override {
         try {
             if (!socket_ || !socket_->is_open()) {
-                PRINT_ERROR("[UDPSocket] Socket is not open");
+                qCritical() << "[UDPSocket] Socket is not open";
                 return -1;
             }
             
@@ -156,15 +156,15 @@ public:
             );
             
             if (ec) {
-                PRINT_ERROR("[UDPSocket] Send failed: " + ec.message());
+                qCritical() << "[UDPSocket] Send failed: " + ec.message();
                 return -1;
             }
             
-            PRINT_TRACE("[UDPSocket] Sent " + std::to_string(bytes_sent) + " bytes");
+            qDebug() << "[UDPSocket] Sent " + std::to_string(bytes_sent) + " bytes";
             return static_cast<int>(bytes_sent);
             
         } catch (const std::exception& e) {
-            PRINT_ERROR("[UDPSocket] Send exception: " + std::string(e.what()));
+            qCritical() << "[UDPSocket] Send exception: " + std::string(e.what());
             return -1;
         }
     }
@@ -178,7 +178,7 @@ public:
     int receive(char* buffer, int buffer_size) override {
         try {
             if (!socket_ || !socket_->is_open()) {
-                PRINT_ERROR("[UDPSocket] Socket is not open");
+                qCritical() << "[UDPSocket] Socket is not open";
                 return -1;
             }
             
@@ -196,21 +196,21 @@ public:
                 if (ec == asio::error::would_block || ec == asio::error::try_again) {
                     return 0; // No data available
                 }
-                PRINT_ERROR("[UDPSocket] Receive failed: " + ec.message());
+                qCritical() << "[UDPSocket] Receive failed: " + ec.message();
                 return -1;
             }
             
             // Update remote endpoint with sender's address
             remote_endpoint_ = sender_endpoint;
             
-            PRINT_TRACE("[UDPSocket] Received " + std::to_string(bytes_received) + 
+            qDebug() << "[UDPSocket] Received " + std::to_string(bytes_received) + 
                        " bytes from " + sender_endpoint.address().to_string() + 
-                       ":" + std::to_string(sender_endpoint.port()));
+                       ":" + std::to_string(sender_endpoint.port());
             
             return static_cast<int>(bytes_received);
             
         } catch (const std::exception& e) {
-            PRINT_ERROR("[UDPSocket] Receive exception: " + std::string(e.what()));
+            qCritical() << "[UDPSocket] Receive exception: " + std::string(e.what());
             return -1;
         }
     }
@@ -222,10 +222,10 @@ public:
         try {
             if (socket_ && socket_->is_open()) {
                 socket_->non_blocking(non_blocking);
-                PRINT_DEBUG("[UDPSocket] Socket set to " + std::string(non_blocking ? "non-blocking" : "blocking") + " mode");
+                qDebug() << "[UDPSocket] Socket set to " << (non_blocking ? "non-blocking" : "blocking") << " mode";
             }
         } catch (const std::exception& e) {
-            PRINT_ERROR("[UDPSocket] Failed to set non-blocking mode: " + std::string(e.what()));
+            qCritical() << "[UDPSocket] Failed to set non-blocking mode: " << e.what();
         }
     }
     
@@ -235,11 +235,11 @@ public:
     void shutdown() override {
         try {
             if (socket_ && socket_->is_open()) {
-                PRINT_DEBUG("[UDPSocket] Shutting down UDP socket");
+                qDebug() << "[UDPSocket] Shutting down UDP socket";
                 socket_->close();
             }
         } catch (const std::exception& e) {
-            PRINT_ERROR("[UDPSocket] Shutdown exception: " + std::string(e.what()));
+            qCritical() << "[UDPSocket] Shutdown exception: " + std::string(e.what());
         }
     }
     
@@ -256,7 +256,7 @@ public:
     bool bind(const std::string& ip, int port) {
         try {
             if (is_bound_) {
-                PRINT_DEBUG("[UDPSocket] Socket already bound");
+                qDebug() << "[UDPSocket] Socket already bound";
                 return true;
             }
             
@@ -269,11 +269,11 @@ public:
             local_ip_ = ip;
             local_port_ = port;
             
-            PRINT_INFO("[UDPSocket] Bound to " + ip + ":" + std::to_string(port));
+            qInfo() << "[UDPSocket] Bound to " + ip + ":" + std::to_string(port);
             return true;
             
         } catch (const std::exception& e) {
-            PRINT_ERROR("[UDPSocket] Bind failed: " + std::string(e.what()));
+            qCritical() << "[UDPSocket] Bind failed: " + std::string(e.what());
             return false;
         }
     }
