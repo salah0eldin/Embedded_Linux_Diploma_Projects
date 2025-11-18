@@ -10,6 +10,11 @@
 // ===================================================================
 #include "server.h"
 #include <QApplication>
+// Logging config (defines g_current_log_level and macros)
+#include "config.h"
+
+// Define global log level for server (default INFO)
+int g_current_log_level = LOG_LEVEL_INFO; // will be overridden by config parser if present
 
 // ===================================================================
 // MAIN FUNCTION

@@ -5,7 +5,8 @@
 // DATE: November 17, 2025
 // ===================================================================
 
-#pragma once
+#ifndef TCPSOCKET_HPP
+#define TCPSOCKET_HPP
 
 // ===================================================================
 // INCLUDES
@@ -167,7 +168,7 @@ public:
      * @return Number of bytes received, or -1 on error
      */
     int receive(char* buffer, int buffer_size) override {
-        PRINT_DEBUG("Waiting to receive data...");
+        PRINT_TRACE("Waiting to receive data...");
         
         try {
             asio::error_code ec;
@@ -225,6 +226,8 @@ public:
     }
     
 };
+
+#endif // TCPSOCKET_HPP
 
 // ===================================================================
 // END OF FILE

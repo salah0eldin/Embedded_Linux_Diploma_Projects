@@ -5,10 +5,10 @@
 # Host server connection settings (receives threshold, sends LED state and temp)
 host_server:
   tcp:
-    ip: "192.168.1.18"   # Host server IP for TCP
+    ip: "127.0.0.1"   # Host server IP for TCP
     port: 8080           # Host server TCP port
   udp:
-    ip: "192.168.1.18"   # Host server IP for UDP
+    ip: "127.0.0.1"   # Host server IP for UDP
     port: 8081           # Host server UDP port
 
 # Sensor/Actuator server connection settings
@@ -22,7 +22,7 @@ sensor_actuator_server:
 
 # Logging configuration
 logging:
-  level: "info"  # Options: none, error, info, debug, trace
+  level: "trace"  # Options: none, error, info, debug, trace
 
 # Application settings
 application:

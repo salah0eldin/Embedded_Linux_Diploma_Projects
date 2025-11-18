@@ -42,6 +42,7 @@ set(PROJECT_SOURCES
         server.h
         server.ui
         resources.qrc
+        config.h
         Socket.hpp
         TCPSocket.hpp
         UDPSocket.hpp

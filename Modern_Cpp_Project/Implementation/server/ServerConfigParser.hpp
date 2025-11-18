@@ -28,6 +28,8 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+// Include server logging config so parser can set runtime log level
+#include "config.h"
 
 // ===================================================================
 // CONFIGURATION STRUCTURE
@@ -95,6 +97,21 @@ public:
                 
                 if (application.has_child("initial_threshold")) {
                     application["initial_threshold"] >> config.initial_threshold;
+                }
+            }
+
+            // Parse logging section for log level and apply it
+            if (root.has_child("logging")) {
+                ryml::ConstNodeRef logging = root["logging"];
+                if (logging.has_child("level")) {
+                    std::string level;
+                    logging["level"] >> level;
+                    try {
+                        setLogLevel(level);
+                        PRINT_DEBUG("Log level set from config: " << level);
+                    } catch (...) {
+                        // ignore errors setting log level
+                    }
                 }
             }
             

@@ -254,6 +254,10 @@ void server::udpReceiverThread() {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
+    // UDP thread exiting
+    qInfo() << "[UDP Thread] Stopped";
+
+}
 // ===================================================================
 // SEND THRESHOLD TO CLIENT
 // ===================================================================

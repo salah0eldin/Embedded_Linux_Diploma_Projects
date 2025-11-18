@@ -5,17 +5,16 @@
 // DATE: November 17, 2025
 // ===================================================================
 
-#ifndef TCPSOCKET_HPP
-#define TCPSOCKET_HPP
+#pragma once
 
 // ===================================================================
 // INCLUDES
 // ===================================================================
 #include "Socket.hpp"
+#include "config.h"
 #include <asio.hpp>
 #include <string>
 #include <vector>
-#include <QDebug>
 
 // ===================================================================
 // TCP SOCKET CLASS
@@ -50,7 +49,7 @@ public:
     TCPSocket(int port, const std::string& ip = "127.0.0.1", bool is_server = false) 
         : socket_(io_context_), acceptor_(nullptr), ip_address(ip), port(port), is_server(is_server) {
         
-        qDebug() << "TCPSocket constructor called";
+        PRINT_DEBUG("TCPSocket constructor called");
         
         if (is_server) {
             // Server mode: create acceptor
@@ -58,14 +57,14 @@ public:
                 asio::ip::tcp::endpoint endpoint(asio::ip::tcp::v4(), port);
                 acceptor_ = new asio::ip::tcp::acceptor(io_context_, endpoint);
                 acceptor_->set_option(asio::ip::tcp::acceptor::reuse_address(true));
-                qDebug() << "Asio acceptor created on port " << port;
+                PRINT_DEBUG("Asio acceptor created on port " << port);
             } catch (const std::exception& e) {
-                qCritical() << "Failed to create acceptor: " << e.what();
+                PRINT_ERROR("Failed to create acceptor: " << e.what());
                 throw;
             }
         } else {
             // Client mode: nothing to initialize until connect()
-            qDebug() << "Client socket configured for " << ip_address << ":" << port;
+            PRINT_DEBUG("Client socket configured for " << ip_address << ":" << port);
         }
     }
     
@@ -73,7 +72,7 @@ public:
      * @brief Destructor
      */
     ~TCPSocket() {
-        qDebug() << "TCPSocket destructor called";
+        PRINT_DEBUG("TCPSocket destructor called");
         shutdown();
         if (acceptor_) {
             delete acceptor_;
@@ -87,18 +86,18 @@ public:
      */
     bool waitForConnect() override {
         if (!is_server) {
-            qCritical() << "waitForConnect called on client socket";
+            PRINT_ERROR("waitForConnect called on client socket");
             return false;
         }
         
-        qDebug() << "Waiting for client connection...";
+        PRINT_DEBUG("Waiting for client connection...");
         
         try {
             acceptor_->accept(socket_);
-            qDebug() << "Client connected";
+            PRINT_DEBUG("Client connected");
             return true;
         } catch (const std::exception& e) {
-            qCritical() << "Failed to accept connection: " << e.what();
+            PRINT_ERROR("Failed to accept connection: " << e.what());
             return false;
         }
     }
@@ -111,11 +110,11 @@ public:
      */
     bool connect(const std::string& ip, int port) override {
         if (is_server) {
-            qCritical() << "connect called on server socket";
+            PRINT_ERROR("connect called on server socket");
             return false;
         }
         
-        qDebug() << "Attempting to connect to " << ip << ":" << port;
+        PRINT_DEBUG("Attempting to connect to " << ip << ":" << port);
         
         try {
             asio::ip::tcp::resolver resolver(io_context_);
@@ -125,14 +124,14 @@ public:
             asio::connect(socket_, endpoints, ec);
             
             if (ec) {
-                qCritical() << "Connection failed: " << ec.message();
+                PRINT_ERROR("Connection failed: " << ec.message());
                 return false;
             }
             
-            qDebug() << "Connected to server successfully";
+            PRINT_DEBUG("Connected to server successfully");
             return true;
         } catch (const std::exception& e) {
-            qCritical() << "Exception during connect: " << e.what();
+            PRINT_ERROR("Exception during connect: " << e.what());
             return false;
         }
     }
@@ -142,21 +141,21 @@ public:
      * @return Number of bytes sent, or -1 on error
      */
     int send(const std::string& message) override {
-        qDebug() << "Sending message: " << message;
+        PRINT_DEBUG("Sending message: " << message);
         
         try {
             asio::error_code ec;
             size_t sent = asio::write(socket_, asio::buffer(message.data(), message.size()), ec);
             
             if (ec) {
-                qCritical() << "Failed to send message: " << ec.message();
+                PRINT_ERROR("Failed to send message: " << ec.message());
                 return -1;
             } else {
-                qDebug() << "Sent " << sent << " bytes";
+                PRINT_DEBUG("Sent " << sent << " bytes");
                 return static_cast<int>(sent);
             }
         } catch (const std::exception& e) {
-            qCritical() << "Exception during send: " << e.what();
+            PRINT_ERROR("Exception during send: " << e.what());
             return -1;
         }
     }
@@ -168,7 +167,7 @@ public:
      * @return Number of bytes received, or -1 on error
      */
     int receive(char* buffer, int buffer_size) override {
-        qDebug() << "Waiting to receive data...";
+        PRINT_DEBUG("Waiting to receive data...");
         
         try {
             asio::error_code ec;
@@ -179,18 +178,18 @@ public:
             if (ec == asio::error::would_block || ec == asio::error::try_again) {
                 return 0;  // No data available, but connection is still alive
             } else if (ec == asio::error::eof) {
-                qDebug() << "Connection closed by peer";
+                PRINT_DEBUG("Connection closed by peer");
                 return -1;  // Connection closed, should break loop
             } else if (ec) {
-                qCritical() << "Failed to receive data: " << ec.message();
+                PRINT_ERROR("Failed to receive data: " << ec.message());
                 return -1;
             } else if (received > 0) {
-                qDebug() << "Received " << received << " bytes";
+                PRINT_DEBUG("Received " << received << " bytes");
                 return static_cast<int>(received);
             }
             return 0;
         } catch (const std::exception& e) {
-            qCritical() << "Exception during receive: " << e.what();
+            PRINT_ERROR("Exception during receive: " << e.what());
             return -1;
         }
     }
@@ -201,9 +200,9 @@ public:
     void setNonBlocking(bool non_blocking) override {
         try {
             socket_.non_blocking(non_blocking);
-            qDebug() << "Socket set to " << (non_blocking ? "non-blocking" : "blocking") << " mode";
+            PRINT_DEBUG("Socket set to " << (non_blocking ? "non-blocking" : "blocking") << " mode");
         } catch (const std::exception& e) {
-            qCritical() << "Failed to set non-blocking mode: " << e.what();
+            PRINT_ERROR("Failed to set non-blocking mode: " << e.what());
         }
     }
     
@@ -211,23 +210,21 @@ public:
      * @brief Shutdown the socket connection
      */
     void shutdown() override {
-        qDebug() << "Shutting down TCP socket...";
+        PRINT_DEBUG("Shutting down TCP socket...");
         
         if (socket_.is_open()) {
             try {
                 asio::error_code ec;
                 socket_.shutdown(asio::ip::tcp::socket::shutdown_both, ec);
                 socket_.close(ec);
-                qDebug() << "Socket closed";
+                PRINT_DEBUG("Socket closed");
             } catch (const std::exception& e) {
-                qCritical() << "Exception during shutdown: " << e.what();
+                PRINT_ERROR("Exception during shutdown: " << e.what());
             }
         }
     }
     
 };
-
-#endif // TCPSOCKET_HPP
 
 // ===================================================================
 // END OF FILE
