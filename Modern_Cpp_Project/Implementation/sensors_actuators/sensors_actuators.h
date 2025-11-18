@@ -10,7 +10,12 @@
 // ===================================================================
 // INCLUDES
 // ===================================================================
+// Include RapidYAML before Qt headers to avoid 'emit' macro conflict
+// See: https://github.com/biojppm/rapidyaml/issues/120
+#include "SensorsActuatorsConfigParser.hpp"
+
 #include <QMainWindow>
+#include <QString>
 
 // ===================================================================
 // FORWARD DECLARATIONS
@@ -38,9 +43,10 @@ class sensors_actuators : public QMainWindow
 public:
     /**
      * @brief Constructor
+     * @param configFile Path to YAML configuration file
      * @param parent Parent widget (default: nullptr)
      */
-    sensors_actuators(QWidget *parent = nullptr);
+    sensors_actuators(const QString& configFile, QWidget *parent = nullptr);
     
     /**
      * @brief Destructor
@@ -52,6 +58,7 @@ public:
 // ===================================================================
 private:
     Ui::sensors_actuators *ui;
+    SensorsActuatorsConfig config_;
 };
 
 // ===================================================================

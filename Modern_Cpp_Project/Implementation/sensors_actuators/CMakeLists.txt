@@ -15,6 +15,15 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 # Fetch dependencies
 include(FetchContent)
 
+# Fetch RapidYAML
+FetchContent_Declare(
+    ryml
+    GIT_REPOSITORY https://github.com/biojppm/rapidyaml.git
+    GIT_TAG v0.5.0
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+)
+
 # Fetch standalone Asio (header-only)
 FetchContent_Declare(
     asio
@@ -25,13 +34,14 @@ FetchContent_Declare(
 )
 
 # Make available
-FetchContent_MakeAvailable(asio)
+FetchContent_MakeAvailable(ryml asio)
 
 set(PROJECT_SOURCES
         main.cpp
         sensors_actuators.cpp
         sensors_actuators.h
         sensors_actuators.ui
+        SensorsActuatorsConfigParser.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -56,6 +66,9 @@ target_link_libraries(sensors_actuators PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 # Link against pthread for threading support
 find_package(Threads REQUIRED)
 target_link_libraries(sensors_actuators PRIVATE Threads::Threads)
+
+# Link RapidYAML
+target_link_libraries(sensors_actuators PRIVATE ryml::ryml)
 
 # Include Asio headers
 target_include_directories(sensors_actuators PRIVATE ${asio_SOURCE_DIR}/asio/include)
@@ -93,9 +106,9 @@ endif()
 
 # Custom target to run the sensors_actuators application
 add_custom_target(run
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/sensors_actuators
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/sensors_actuators ${CMAKE_CURRENT_SOURCE_DIR}/../config.yaml
     DEPENDS sensors_actuators
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Running Sensors & Actuators application..."
+    COMMENT "Running Sensors & Actuators application with config file..."
     USES_TERMINAL
 )
