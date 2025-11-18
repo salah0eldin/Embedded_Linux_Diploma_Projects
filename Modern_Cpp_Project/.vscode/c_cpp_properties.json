@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/build/_deps/**",
                 "/home/salah0eldin/Programs/Qt/6.9.3/gcc_64/include/**",
-                "/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/server/build/server_autogen/include"
+                "/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/server/build/server_autogen/include",
+                "/mnt/d_drive/Learning/Embedded_Linux_Diploma/00_Projects/Modern_Cpp_Project/Implementation/sensors_actuators/build/sensors_actuators_autogen/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",
