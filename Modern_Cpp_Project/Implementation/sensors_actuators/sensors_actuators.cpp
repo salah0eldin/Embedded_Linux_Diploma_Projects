@@ -33,6 +33,22 @@ sensors_actuators::sensors_actuators(const QString& configFile, QWidget *parent)
     PRINT_INFO("Temperature Range: " << config_.temperature_min << "°C - " << config_.temperature_max << "°C");
     PRINT_INFO("Update Interval: " << config_.update_interval_ms << "ms");
     
+    // Initialize slider with config values
+    // Multiply by 10 to allow 0.1°C precision with integer slider
+    ui->sliderTemperature->setMinimum(static_cast<int>(config_.temperature_min * 10));
+    ui->sliderTemperature->setMaximum(static_cast<int>(config_.temperature_max * 10));
+    ui->sliderTemperature->setValue(static_cast<int>((config_.temperature_min + config_.temperature_max) / 2 * 10));
+    
+    // Update min/max labels
+    ui->labelMinTemp->setText(QString::number(config_.temperature_min, 'f', 1) + "°C");
+    ui->labelMaxTemp->setText(QString::number(config_.temperature_max, 'f', 1) + "°C");
+    
+    // Connect slider to temperature display update
+    connect(ui->sliderTemperature, &QSlider::valueChanged, this, &sensors_actuators::onTemperatureChanged);
+    
+    // Initialize temperature display
+    onTemperatureChanged(ui->sliderTemperature->value());
+    
     PRINT_INFO("Sensors & Actuators window initialized");
 }
 
@@ -43,6 +59,20 @@ sensors_actuators::~sensors_actuators()
 {
     PRINT_INFO("Sensors & Actuators window closing");
     delete ui;
+}
+
+// ===================================================================
+// SLOTS
+// ===================================================================
+void sensors_actuators::onTemperatureChanged(int value)
+{
+    // Convert slider value back to temperature (divide by 10)
+    float temperature = value / 10.0f;
+    
+    // Update temperature display
+    ui->labelTemperatureValue->setText(QString::number(temperature, 'f', 1) + "°C");
+    
+    PRINT_DEBUG("Temperature changed: " << temperature << "°C");
 }
 
 // ===================================================================

@@ -63,7 +63,7 @@ private slots:
     void onFacebookClicked();
     void onLinkedInClicked();
     void onInstagramClicked();
-    void onThresholdChanged(double value);
+    void onThresholdChanged(int value);
     void updateTemperatureDisplay(float temperature);
     void updateLedStatus(bool ledOn);
 

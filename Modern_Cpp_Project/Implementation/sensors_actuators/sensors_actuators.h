@@ -54,6 +54,16 @@ public:
     ~sensors_actuators();
 
 // ===================================================================
+// PRIVATE SLOTS
+// ===================================================================
+private slots:
+    /**
+     * @brief Handle temperature slider value changes
+     * @param value Slider value (temperature * 10)
+     */
+    void onTemperatureChanged(int value);
+
+// ===================================================================
 // PRIVATE MEMBERS
 // ===================================================================
 private:

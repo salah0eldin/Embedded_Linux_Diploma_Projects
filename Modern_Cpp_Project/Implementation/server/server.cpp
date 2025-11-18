@@ -40,12 +40,17 @@ server::server(const QString& configFile, QWidget *parent)
     connect(ui->btnLinkedIn, &QPushButton::clicked, this, &server::onLinkedInClicked);
     connect(ui->btnInstagram, &QPushButton::clicked, this, &server::onInstagramClicked);
     
-    // Connect threshold spinbox
-    connect(ui->spinBoxThreshold, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+    // Connect threshold slider
+    connect(ui->sliderThreshold, &QSlider::valueChanged,
             this, &server::onThresholdChanged);
     
-    // Set initial threshold value in spinbox
-    ui->spinBoxThreshold->setValue(current_threshold_);
+    // Set initial threshold value in slider (multiply by 10 for 0.1 precision)
+    ui->sliderThreshold->setMinimum(0);
+    ui->sliderThreshold->setMaximum(1000);
+    ui->sliderThreshold->setValue(static_cast<int>(current_threshold_ * 10));
+    
+    // Update threshold label
+    ui->labelThresholdValue->setText(QString::number(current_threshold_, 'f', 1) + "°C");
     
     // Start the server
     startServer();
@@ -81,10 +86,15 @@ void server::onInstagramClicked() {
 }
 
 // ===================================================================
-// SLOT: THRESHOLD CHANGED
+// SLOT: HANDLE THRESHOLD CHANGES
 // ===================================================================
-void server::onThresholdChanged(double value) {
-    current_threshold_ = static_cast<float>(value);
+void server::onThresholdChanged(int value) {
+    // Convert slider value to temperature (divide by 10)
+    current_threshold_ = value / 10.0f;
+    
+    // Update threshold label
+    ui->labelThresholdValue->setText(QString::number(current_threshold_, 'f', 1) + "°C");
+    
     PRINT_INFO("Threshold changed to: " << current_threshold_ << "°C");
     sendThresholdToClient(current_threshold_);
 }

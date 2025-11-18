@@ -280,9 +280,6 @@ QDoubleSpinBox {
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
          <widget class="QLabel" name="labelConfigTitle">
-          <property name="text">
-           <string>Temperature Threshold Configuration</string>
-          </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
@@ -310,9 +307,6 @@ QDoubleSpinBox {
         </item>
         <item>
          <widget class="QGroupBox" name="groupBoxThreshold">
-          <property name="title">
-           <string>Threshold Settings</string>
-          </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
@@ -322,48 +316,55 @@ QDoubleSpinBox {
            </font>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
+           <property name="spacing">
+            <number>20</number>
+           </property>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
-              <widget class="QLabel" name="labelThreshold">
-               <property name="text">
-                <string>Temperature Threshold (°C):</string>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>11</pointsize>
-                </font>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QDoubleSpinBox" name="spinBoxThreshold">
-               <property name="minimum">
-                <double>0.000000000000000</double>
-               </property>
-               <property name="maximum">
-                <double>100.000000000000000</double>
-               </property>
-               <property name="value">
-                <double>30.000000000000000</double>
-               </property>
-               <property name="decimals">
-                <number>1</number>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>120</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>11</pointsize>
-                </font>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <widget class="QLabel" name="labelThresholdTitle">
+             <property name="text">
+              <string>Temperature Threshold</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>20</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QLabel {
+    color: white;
+}</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="labelThresholdValue">
+             <property name="text">
+              <string>30.0°C</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>48</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QLabel {
+    color: white;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+}</string>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QSlider" name="sliderThreshold">
@@ -384,6 +385,24 @@ QDoubleSpinBox {
              </property>
              <property name="tickInterval">
               <number>10</number>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QSlider::groove:horizontal {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+QSlider::handle:horizontal {
+    background: white;
+    border: 2px solid #1b85c1;
+    width: 18px;
+    margin: -5px 0;
+    border-radius: 9px;
+}
+QSlider::handle:horizontal:hover {
+    background: #e0e0e0;
+}</string>
              </property>
             </widget>
            </item>
