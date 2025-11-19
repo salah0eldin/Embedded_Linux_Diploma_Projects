@@ -24,24 +24,8 @@
  * @brief Configuration structure for sensors_actuators application
  */
 struct SensorsActuatorsConfig {
-    // Server connection settings
-    std::string server_tcp_ip;
-    int server_tcp_port;
-    int server_udp_port;
-    
-    // Sensor settings
-    float temperature_min;
-    float temperature_max;
-    int update_interval_ms;
-    
-    // Default values
-    SensorsActuatorsConfig() 
-        : server_tcp_ip("127.0.0.1"),
-          server_tcp_port(8080),
-          server_udp_port(8081),
-          temperature_min(20.0f),
-          temperature_max(35.0f),
-          update_interval_ms(1000) {}
+    std::string tcp_ip = "0.0.0.0";
+    int tcp_port = 9080;
 };
 
 // ===================================================================
@@ -77,45 +61,16 @@ public:
             ryml::Tree tree = ryml::parse_in_arena(ryml::to_csubstr(yaml_content));
             ryml::ConstNodeRef root = tree.rootref();
             
-            // Parse server connection settings
-            if (root.has_child("server")) {
-                ryml::ConstNodeRef server = root["server"];
+            // Parse sensor_actuator_server section
+            if (root.has_child("sensor_actuator_server")) {
+                ryml::ConstNodeRef server = root["sensor_actuator_server"];
                 
-                if (server.has_child("tcp_ip")) {
-                    std::string tcp_ip;
-                    server["tcp_ip"] >> tcp_ip;
-                    config.server_tcp_ip = tcp_ip;
-                    PRINT_DEBUG("Parsed server TCP IP: " << config.server_tcp_ip);
-                }
-                
-                if (server.has_child("tcp_port")) {
-                    server["tcp_port"] >> config.server_tcp_port;
-                    PRINT_DEBUG("Parsed server TCP port: " << config.server_tcp_port);
-                }
-                
-                if (server.has_child("udp_port")) {
-                    server["udp_port"] >> config.server_udp_port;
-                    PRINT_DEBUG("Parsed server UDP port: " << config.server_udp_port);
-                }
-            }
-            
-            // Parse sensor settings
-            if (root.has_child("sensors")) {
-                ryml::ConstNodeRef sensors = root["sensors"];
-                
-                if (sensors.has_child("temperature_min")) {
-                    sensors["temperature_min"] >> config.temperature_min;
-                    PRINT_DEBUG("Parsed temperature_min: " << config.temperature_min);
-                }
-                
-                if (sensors.has_child("temperature_max")) {
-                    sensors["temperature_max"] >> config.temperature_max;
-                    PRINT_DEBUG("Parsed temperature_max: " << config.temperature_max);
-                }
-                
-                if (sensors.has_child("update_interval_ms")) {
-                    sensors["update_interval_ms"] >> config.update_interval_ms;
-                    PRINT_DEBUG("Parsed update_interval_ms: " << config.update_interval_ms);
+                if (server.has_child("tcp")) {
+                    ryml::ConstNodeRef tcp = server["tcp"];
+                    if (tcp.has_child("port")) {
+                        tcp["port"] >> config.tcp_port;
+                        PRINT_DEBUG("Parsed TCP port: " << config.tcp_port);
+                    }
                 }
             }
             

@@ -93,7 +93,7 @@ public:
                 }
             }
             
-            // Parse sensor_actuator_server section
+            // Parse sensor_actuator_server section (TCP only)
             if (root.has_child("sensor_actuator_server")) {
                 ryml::ConstNodeRef sensor_server = root["sensor_actuator_server"];
                 
@@ -106,18 +106,6 @@ public:
                     }
                     if (tcp.has_child("port")) {
                         tcp["port"] >> config.sensor_actuator_server.tcp_port;
-                    }
-                }
-                
-                if (sensor_server.has_child("udp")) {
-                    ryml::ConstNodeRef udp = sensor_server["udp"];
-                    if (udp.has_child("ip")) {
-                        std::string ip;
-                        udp["ip"] >> ip;
-                        config.sensor_actuator_server.udp_ip = ip;
-                    }
-                    if (udp.has_child("port")) {
-                        udp["port"] >> config.sensor_actuator_server.udp_port;
                     }
                 }
             }

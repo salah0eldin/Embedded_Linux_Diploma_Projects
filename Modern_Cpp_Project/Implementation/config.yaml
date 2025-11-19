@@ -11,18 +11,15 @@ host_server:
     ip: "192.168.1.18"   # Host server IP for UDP
     port: 8081           # Host server UDP port
 
-# Sensor/Actuator server connection settings
+# Sensor/Actuator server connection settings (TCP only for request-response)
 sensor_actuator_server:
   tcp:
-    ip: "192.168.1.18"   # Sensor/Actuator server IP for TCP (send LED state)
+    ip: "192.168.1.18"   # Sensor/Actuator server IP for TCP
     port: 9080           # Sensor/Actuator server TCP port
-  udp:
-    ip: "192.168.1.18"   # Sensor/Actuator server IP for UDP (receive temp)
-    port: 9081           # Sensor/Actuator server UDP port
 
 # Logging configuration
 logging:
-  level: "trace"  # Options: none, error, info, debug, trace
+  level: "debug"  # Options: none, error, info, debug, trace
 
 # Application settings
 application:

@@ -114,8 +114,20 @@ void server::updateTemperatureDisplay(float temperature) {
 // ===================================================================
 void server::updateLedStatus(bool ledOn) {
     current_led_state_ = ledOn;
-    QString statusText = QString("💡 LED Status: %1").arg(ledOn ? "ON" : "OFF");
-    ui->labelLedStatus->setText(statusText);
+    
+    QString ledText = ledOn ? "💡 LED Status: ON" : "💡 LED Status: OFF";
+    QString ledColor = ledOn ? "color: #ffff00;" : "color: #e0e0e0;";
+    
+    ui->labelLedStatus->setText(ledText);
+    ui->labelLedStatus->setStyleSheet(
+        "QLabel {"
+        "    background-color: rgba(0, 0, 0, 0.3);"
+        "    border-radius: 8px;"
+        "    padding: 15px;"
+        "    " + ledColor +
+        "}"
+    );
+    
     PRINT_INFO("LED status updated: " << (ledOn ? "ON" : "OFF"));
 }
 
@@ -229,7 +241,7 @@ void server::tcpListenerThread() {
                     updateLedStatus(ledOn);
                 }, Qt::QueuedConnection);
             }
-        } else if (bytes == 0) {
+        } else if (bytes == 0 || bytes == -1) {
             PRINT_INFO("[TCP Thread] Client disconnected");
             break;
         }
@@ -265,6 +277,9 @@ void server::udpReceiverThread() {
                     PRINT_ERROR("[UDP Thread] Failed to parse temperature: " << e.what());
                 }
             }
+        } else if (bytes == -1) {
+            running_ = false;
+            break;
         }
         
         // Small sleep to avoid busy waiting
