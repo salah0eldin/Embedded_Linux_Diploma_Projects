@@ -222,7 +222,13 @@ QDoubleSpinBox {
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>400</height>
+            <height>300</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>500</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -257,13 +263,6 @@ QDoubleSpinBox {
              </size>
             </property>
            </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="labelDataPoints">
-            <property name="text">
-             <string>Data Points: 0</string>
-            </property>
-           </widget>
           </item>
          </layout>
         </item>

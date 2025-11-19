@@ -14,9 +14,14 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QTimer>
+#include <QtCharts/QChart>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QValueAxis>
 #include <thread>
 #include <memory>
 #include <atomic>
+#include <deque>
 #include "TCPSocket.hpp"
 #include "UDPSocket.hpp"
 #include "ServerConfigParser.hpp"
@@ -66,6 +71,8 @@ private slots:
     void onThresholdChanged(int value);
     void updateTemperatureDisplay(float temperature);
     void updateLedStatus(bool ledOn);
+    void onClearHistoryClicked();
+    void updateChart();
 
 // ===================================================================
 // PRIVATE METHODS
@@ -73,6 +80,7 @@ private slots:
 private:
     void startServer();
     void stopServer();
+    void setupChart();
     void tcpListenerThread();
     void udpReceiverThread();
     void sendThresholdToClient(float threshold);
@@ -99,6 +107,18 @@ private:
     float current_threshold_;
     float current_temperature_;
     bool current_led_state_;
+    
+    // Chart members
+    QChart* chart_;
+    QChartView* chartView_;
+    QLineSeries* series_;
+    QValueAxis* axisX_;
+    QValueAxis* axisY_;
+    QTimer* chartUpdateTimer_;
+    std::deque<float> temperatureHistory_;
+    qint64 dataPointCounter_;
+    static constexpr int MAX_POINTS = 100;  // Show last 100 points
+    static constexpr int UPDATE_INTERVAL_MS = 100;  // Update every 100ms (10x slower than real data)
 };
 
 // ===================================================================
