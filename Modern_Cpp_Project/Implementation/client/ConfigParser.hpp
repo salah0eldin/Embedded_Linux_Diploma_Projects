@@ -136,7 +136,9 @@ public:
             
         } catch (const std::exception& e) {
             // If parsing fails, return default config
-            // Error will be logged by caller if needed
+            // Log the exception message to standard error and continue with defaults
+            std::cerr << "ConfigParser::parseConfig: error parsing '" << filename
+                      << "': " << e.what() << std::endl;
         }
         
         return config;

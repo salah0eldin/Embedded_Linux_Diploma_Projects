@@ -39,7 +39,12 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(ryml asio)
 
 # Client executable
-add_executable(client Client.cpp)
+add_executable(client 
+    Client.cpp
+    ClientApp.cpp
+    ../include/TCPSocket.cpp
+    ../include/UDPSocket.cpp
+)
 
 # Include Asio headers
 target_include_directories(client PRIVATE ${asio_SOURCE_DIR}/asio/include)

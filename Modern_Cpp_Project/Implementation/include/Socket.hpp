@@ -53,14 +53,14 @@ public:
     virtual int receive(char* buffer, int buffer_size) = 0;
     
     /**
-     * @brief Set socket to non-blocking mode
-     */
-    virtual void setNonBlocking(bool non_blocking) = 0;
-    
-    /**
      * @brief Shutdown the socket connection
      */
     virtual void shutdown() = 0;
+        
+    /**
+     * @brief Set socket to non-blocking mode
+     */
+    virtual void setNonBlocking(bool non_blocking) = 0;
 };
 
 // ===================================================================

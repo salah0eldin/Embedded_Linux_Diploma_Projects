@@ -42,6 +42,8 @@ set(PROJECT_SOURCES
         sensors_actuators.h
         sensors_actuators.ui
         SensorsActuatorsConfigParser.hpp
+        ../include/TCPSocket.cpp
+        ../include/UDPSocket.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

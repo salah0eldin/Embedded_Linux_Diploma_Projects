@@ -43,6 +43,8 @@ set(PROJECT_SOURCES
         server.ui
         resources.qrc
         ServerConfigParser.hpp
+        ../include/TCPSocket.cpp
+        ../include/UDPSocket.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

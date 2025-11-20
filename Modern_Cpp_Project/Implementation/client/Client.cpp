@@ -120,7 +120,6 @@ int main(int argc, char* argv[]) {
     PRINT_DEBUG("Host Server TCP: " << config.host_server.tcp_ip << ":" << config.host_server.tcp_port);
     PRINT_DEBUG("Host Server UDP: " << config.host_server.udp_ip << ":" << config.host_server.udp_port);
     PRINT_DEBUG("Sensor Server TCP: " << config.sensor_actuator_server.tcp_ip << ":" << config.sensor_actuator_server.tcp_port);
-    PRINT_DEBUG("Sensor Server UDP: " << config.sensor_actuator_server.udp_ip << ":" << config.sensor_actuator_server.udp_port);
     PRINT_DEBUG("Initial Threshold: " << config.initial_threshold << "°C");
     PRINT_DEBUG("Check Interval: " << config.check_interval << "ms");
     
