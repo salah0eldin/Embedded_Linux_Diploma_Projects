@@ -90,7 +90,7 @@ void server::onFacebookClicked() {
 // SLOT: LINKEDIN CLICKED
 // ===================================================================
 void server::onLinkedInClicked() {
-    QDesktopServices::openUrl(QUrl("https://www.linkedin.com"));
+    QDesktopServices::openUrl(QUrl("https://www.linkedin.com/in/salah-eldin-hassen-5bba10250/"));
 }
 
 // ===================================================================
