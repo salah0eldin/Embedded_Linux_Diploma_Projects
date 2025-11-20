@@ -219,7 +219,7 @@ void sensors_actuators::tcpListenerThread()
         } else {
             // bytes == 0 in non-blocking mode means no data available, not disconnected
             // No data available, sleep briefly
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
     
