@@ -19,7 +19,7 @@ sensor_actuator_server:
 
 # Logging configuration
 logging:
-  level: "debug"  # Options: none, error, info, debug, trace
+  level: "info"  # Options: none, error, info, debug, trace
 
 # Application settings
 application:

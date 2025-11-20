@@ -10,20 +10,8 @@
 // ===================================================================
 // INCLUDES
 // ===================================================================
-// Workaround for Qt/RapidYAML conflict: undefine emit before including ryml
-#ifdef emit
-#undef emit
-#define RYML_QT_EMIT_CONFLICT_WORKAROUND
-#endif
-
 #include <ryml.hpp>
 #include <ryml_std.hpp>
-
-// Redefine emit for Qt after ryml includes
-#ifdef RYML_QT_EMIT_CONFLICT_WORKAROUND
-#define emit
-#undef RYML_QT_EMIT_CONFLICT_WORKAROUND
-#endif
 
 #include <string>
 #include <fstream>

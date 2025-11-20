@@ -39,6 +39,7 @@ FetchContent_MakeAvailable(ryml asio)
 set(PROJECT_SOURCES
         main.cpp
         server.cpp
+        ServerLogic.cpp
         server.h
         server.ui
         resources.qrc

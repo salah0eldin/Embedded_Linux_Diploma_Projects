@@ -10,6 +10,10 @@
 // ===================================================================
 // INCLUDES
 // ===================================================================
+#include "TCPSocket.hpp"
+#include "UDPSocket.hpp"
+#include "ServerConfigParser.hpp"
+
 #include <QMainWindow>
 #include <QDesktopServices>
 #include <QUrl>
@@ -22,9 +26,6 @@
 #include <memory>
 #include <atomic>
 #include <deque>
-#include "TCPSocket.hpp"
-#include "UDPSocket.hpp"
-#include "ServerConfigParser.hpp"
 
 // ===================================================================
 // FORWARD DECLARATIONS

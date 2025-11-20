@@ -8,11 +8,16 @@
 // ===================================================================
 // INCLUDES
 // ===================================================================
-#include "server.h"
+#include "ServerConfigParser.hpp"
 #include "config.h"
+
+#include "server.h"
 #include <QApplication>
 #include <QString>
 
+// ===================================================================
+// GLOBAL VARIABLES
+// ===================================================================
 // Define global log level for server (default INFO)
 int g_current_log_level = LOG_LEVEL_INFO; // will be overridden by config parser if present
 
