@@ -8,7 +8,6 @@
 // ===================================================================
 // INCLUDES
 // ===================================================================
-// Include config parser (with RapidYAML) before Qt headers
 #include "SensorsActuatorsConfigParser.hpp"
 #include "config.h"
 

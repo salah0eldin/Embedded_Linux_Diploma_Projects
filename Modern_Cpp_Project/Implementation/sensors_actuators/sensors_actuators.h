@@ -10,8 +10,6 @@
 // ===================================================================
 // INCLUDES
 // ===================================================================
-// Include RapidYAML before Qt headers to avoid 'emit' macro conflict
-// See: https://github.com/biojppm/rapidyaml/issues/120
 #include "SensorsActuatorsConfigParser.hpp"
 #include "TCPSocket.hpp"
 

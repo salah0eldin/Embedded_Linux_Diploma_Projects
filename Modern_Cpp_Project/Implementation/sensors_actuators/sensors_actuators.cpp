@@ -34,9 +34,9 @@ sensors_actuators::sensors_actuators(const QString& configFile, QWidget *parent)
     
     // Initialize slider with default values (0.0 to 100.0)
     // Multiply by 10 to allow 0.1°C precision with integer slider
-    ui->sliderTemperature->setMinimum(0);  // 0.0°C
+    ui->sliderTemperature->setMinimum(0);     // 0.0°C
     ui->sliderTemperature->setMaximum(1000);  // 100.0°C
-    ui->sliderTemperature->setValue(275);    // 27.5°C
+    ui->sliderTemperature->setValue(275);     // 27.5°C
     
     // Update min/max labels
     ui->labelMinTemp->setText("0.0°C");
@@ -219,7 +219,7 @@ void sensors_actuators::tcpListenerThread()
         } else {
             // bytes == 0 in non-blocking mode means no data available, not disconnected
             // No data available, sleep briefly
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     }
     
